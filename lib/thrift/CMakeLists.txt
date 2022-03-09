@@ -10,6 +10,7 @@ target_compile_definitions(app PUBLIC _GLIBCXX_HAS_GTHREADS=1)
 
 zephyr_library()
 zephyr_include_directories(include)
+zephyr_include_directories(${ZEPHYR_CURRENT_MODULE_DIR}/.upstream/lib/cpp/src)
 
 zephyr_library_sources(
   src/thrift/server/TFDServer.cpp
