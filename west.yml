@@ -2,7 +2,7 @@
 
 manifest:
   self:
-    path: thrift4z
+    path: thrift-for-zephyr
 
   remotes:
     - name: zephyrproject-rtos

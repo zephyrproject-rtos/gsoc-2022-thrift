@@ -3,7 +3,7 @@
 build:
   kconfig: Kconfig
   cmake: .
-  samples:
-    - samples
-  tests:
-    - tests
+samples:
+  - samples
+tests:
+  - tests
