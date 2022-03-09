@@ -1,3 +1,9 @@
+#if CONFIG_POSIX_SOC
+#include <unistd.h>
+#else
+#include <posix/unistd.h>
+#endif
+
 #include <thrift/transport/TFDTransport.h>
 
 #include "thrift/server/TFDServer.h"
