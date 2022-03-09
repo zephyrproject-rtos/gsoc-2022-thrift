@@ -24,7 +24,7 @@ function(thrift
     ${THRIFT_EXECUTABLE}
     --gen ${lang}${lang_opts}
     -o ${out_dir}
-    "${CMAKE_CURRENT_SOURCE_DIR}/${source_file}"
+    ${source_file}
     ${options}
     DEPENDS ${source_file}
     )

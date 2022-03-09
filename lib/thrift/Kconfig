@@ -4,7 +4,11 @@ menu "Thrift"
 
 config THRIFT
   bool "Enable support for Thrift"
-  
+  depends on CPLUSPLUS
+  depends on LIB_CPLUSPLUS
+  depends on STD_CPP17
+  help
+    Enable this option to support Apache Thrift
 endmenu
 
 module = THRIFT
