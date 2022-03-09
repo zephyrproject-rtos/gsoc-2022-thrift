@@ -1,0 +1,11 @@
+# editors
+.vscode
+*.swp
+*~
+.DS_Store
+
+# python
+.venv
+
+# build
+/build*

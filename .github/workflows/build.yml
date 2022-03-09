@@ -1,0 +1,42 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: zephyrprojectrtos/ci:latest
+    env:
+      T4Z: ${{ github.workspace }}/thrift-for-zephyr
+      CMAKE_PREFIX_PATH: /opt/toolchains
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          path: ${T4Z}
+
+      - name: Initialize
+        working-directory: ${T4Z}
+        run: |
+          pip3 install -U west
+          west init -l .
+          west update
+          pip3 install -r ../zephyr/scripts/requirements-base.txt
+
+      - name: Tests
+        working-directory: ${T4Z}
+        run: |
+          twister -i --emulation-only -T tests/lib/thrift
+
+      - name: Build Samples
+        working-directory: ${T4Z}
+        run: |
+          west build -p auto -b qemu_x86_64 samples/lib/thrift/hello_client
+          west build -p auto -b qemu_x86_64 samples/lib/thrift/hello_server
+
+      - name: Archive firmware
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware
+          path: ${T4Z}/build/zephyr/zephyr.*

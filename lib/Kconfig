@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+
+menu "Thrift"
+
+config THRIFT
+  bool "Enable support for Thrift"
+  
+endmenu
+
+module = THRIFT
+module-str = THRIFT
+source "subsys/logging/Kconfig.template.log_config"
