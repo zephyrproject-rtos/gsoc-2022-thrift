@@ -21,7 +21,7 @@
 
 #include "Hello.h"
 #include "HelloHandler.h"
-#include "thrift/transport/TFDServer.h"
+#include "thrift/server/TFDServer.h"
 
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>

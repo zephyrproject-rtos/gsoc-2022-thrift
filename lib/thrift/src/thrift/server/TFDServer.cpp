@@ -1,6 +1,6 @@
 #include <thrift/transport/TFDTransport.h>
 
-#include "TFDServer.h"
+#include "thrift/server/TFDServer.h"
 
 namespace apache
 {
