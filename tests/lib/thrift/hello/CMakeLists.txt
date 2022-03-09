@@ -10,7 +10,7 @@ FILE(GLOB app_sources
 )
 
 set(generated_sources "")
-set(gen_dir ${ZEPHYR_BINARY_DIR}/misc/generated/thrif_hello)
+set(gen_dir ${ZEPHYR_BINARY_DIR}/misc/generated/thrift_hello)
 list(APPEND generated_sources ${gen_dir}/gen-cpp/hello_types.h)
 list(APPEND generated_sources ${gen_dir}/gen-cpp/Hello.cpp)
 list(APPEND generated_sources ${gen_dir}/gen-cpp/Hello.h)
