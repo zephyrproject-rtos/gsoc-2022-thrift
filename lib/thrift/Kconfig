@@ -8,6 +8,7 @@ config THRIFT
   depends on LIB_CPLUSPLUS
   depends on STD_CPP17
   depends on EXCEPTIONS
+  depends on POSIX_API
   help
     Enable this option to support Apache Thrift
 endmenu
