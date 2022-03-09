@@ -1,8 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 find_program(THRIFT_EXECUTABLE thrift)
-find_package(PkgConfig REQUIRED)
-pkg_search_module(THRIFT REQUIRED thrift)
 
 message(STATUS "Found thrift executable: ${THRIFT_EXECUTABLE}")
 message(STATUS "Found pkg-config executable: ${PKGCONFIG_EXECUTABLE}")
@@ -30,5 +28,4 @@ function(thrift
     )
 
     target_include_directories(${target} PRIVATE ${out_dir}/gen-${lang})
-    target_include_directories(${target} PRIVATE ${THRIFT_INCLUDE_DIRS})
 endfunction()
