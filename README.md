@@ -22,22 +22,28 @@ cd my-workspace
 west update
 ```
 
-If this is the first time building Zephyr, please set up your `~/.zephyrrc` file:
+### One-time Setup
 
+If this is the first time building the module, please set up your `~/.zephyrrc` file:
 ```shell
 export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
 # Will vary based on the installed SDK version
 export ZEPHYR_SDK_INSTALL_DIR=~/zephyr-sdk-0.13.1
 ```
 
-```
-source ~/.zephyrrc
+Then, run the following:
+```shell
+cd thrift-for-zephyr/
+git submodule init
+git submodule update
 ```
 
-### Build & Run the Hello Test
+### Build & Run the Hello Test App
 
 The application can be built by running:
-
 ```shell
+cd my-workspace/thrift-for-zephyr
+source ~/.zephyrrc
+export ZEPHYR_BASE=${PWD}/../zephyr
 west build -p auto -b qemu_x86_64 -t run -s ../thrift-for-zephyr/tests/lib/thrift/hello
 ```
