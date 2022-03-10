@@ -8,6 +8,11 @@ Before getting started, make sure you have a proper Zephyr development
 environment. You can follow the official
 [Zephyr Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html).
 
+### Installing Thrift Binary
+Aside from the dependencies in the Zephyr Getting Started Guide above, you will also need to install Thrift. On MacOS, you can use:
+
+```brew install thrift```
+
 ### Initialization
 
 The first step is to initialize the workspace folder (``my-workspace``) where
