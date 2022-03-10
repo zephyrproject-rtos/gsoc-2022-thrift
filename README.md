@@ -2,6 +2,11 @@
 
 This repository contains a Zephyr module to support Thrift.
 
+## Build Status
+
+![Build](https://github.com/github/docs/actions/workflows/build.yml/badge.svg)
+
+
 ## Getting Started
 
 Before getting started, make sure you have a proper Zephyr development
