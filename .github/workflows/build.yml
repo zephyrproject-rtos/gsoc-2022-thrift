@@ -7,36 +7,33 @@ jobs:
     runs-on: ubuntu-latest
     container: zephyrprojectrtos/ci:latest
     env:
-      T4Z: ${{ github.workspace }}/thrift-for-zephyr
+      THRIFT_VERSION: 0.16.0
       CMAKE_PREFIX_PATH: /opt/toolchains
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          submodules: true
-          path: ${T4Z}
+          path: thrift-for-zephyr
 
       - name: Initialize
-        working-directory: ${T4Z}
+        working-directory: thrift-for-zephyr
         run: |
+          wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/libthriftc_${THRIFT_VERSION}-1.x86_64.deb
+          wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/libthrift_${THRIFT_VERSION}-1.x86_64.deb
+          wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/thrift_${THRIFT_VERSION}-1.x86_64.deb
+          dpkg -i libthriftc_${THRIFT_VERSION}-1.x86_64.deb
+          dpkg -i libthrift_${THRIFT_VERSION}-1.x86_64.deb
+          dpkg -i thrift_${THRIFT_VERSION}-1.x86_64.deb
           pip3 install -U west
           west init -l .
           west update
           pip3 install -r ../zephyr/scripts/requirements-base.txt
-
-      - name: Tests
-        working-directory: ${T4Z}
+      - name: Build Firmware
+        working-directory: thrift-for-zephyr
         run: |
-          twister -i --emulation-only -T tests/lib/thrift
-
-      - name: Build Samples
-        working-directory: ${T4Z}
-        run: |
-          west build -p auto -b qemu_x86_64 samples/lib/thrift/hello_client
-          west build -p auto -b qemu_x86_64 samples/lib/thrift/hello_server
-
+          west build -p auto -b qemu_x86_64 -s tests/lib/thrift/hello
       - name: Archive firmware
         uses: actions/upload-artifact@v2
         with:
           name: firmware
-          path: ${T4Z}/build/zephyr/zephyr.*
+          path: thrift-for-zephyr/build/zephyr/zephyr.*

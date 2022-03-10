@@ -2,6 +2,10 @@
 
 This repository contains a Zephyr module to support Thrift.
 
+## Build Status
+
+[![Build](https://github.com/cfriedt/thrift-for-zephyr/actions/workflows/build.yml/badge.svg)](https://github.com/cfriedt/thrift-for-zephyr/actions)
+
 ## Getting Started
 
 Before getting started, make sure you have a proper Zephyr development
@@ -43,5 +47,5 @@ The application can be built by running:
 cd my-workspace/thrift-for-zephyr
 source ~/.zephyrrc
 export ZEPHYR_BASE=${PWD}/../zephyr
-west build -p auto -b qemu_x86_64 -t run -s ../thrift-for-zephyr/tests/lib/thrift/hello
+west build -p auto -b qemu_x86_64 -t run tests/lib/thrift/hello
 ```
