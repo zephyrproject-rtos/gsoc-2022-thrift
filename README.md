@@ -36,13 +36,6 @@ export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
 export ZEPHYR_SDK_INSTALL_DIR=~/zephyr-sdk-0.13.1
 ```
 
-Then, run the following:
-```shell
-cd thrift-for-zephyr/
-git submodule init
-git submodule update
-```
-
 ### Build & Run the Hello Test App
 
 The application can be built by running:
