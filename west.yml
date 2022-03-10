@@ -7,8 +7,15 @@ manifest:
   remotes:
     - name: zephyrproject-rtos
       url-base: https://github.com/zephyrproject-rtos
+    - name: cfriedt
+      url-base: https://github.com/cfriedt
 
   projects:
+    # This is actually a submodule of 'self'
+    - name: thrift
+      remote: cfriedt
+      path: thrift-for-zephyr/.upstream
+      revision: 9ae087df932c65f8de9e0fc2d12b828b8306b234
     - name: zephyr
       remote: zephyrproject-rtos
       revision: main

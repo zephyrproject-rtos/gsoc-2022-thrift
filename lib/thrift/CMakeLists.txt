@@ -25,5 +25,4 @@ zephyr_library_sources(
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TBufferTransports.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/TApplicationException.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/TOutput.cpp
-  ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/TOutput.cpp
 )
