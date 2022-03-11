@@ -40,9 +40,14 @@ export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
 export ZEPHYR_SDK_INSTALL_DIR=~/zephyr-sdk-0.13.1
 ```
 
+### Create a Unix socket at /tmp/slip.sock
+
+Zephyr expects this socket to be open for Qemu to communicate over as an emulated serial interface. Since Zephyr [net-tools](https://docs.zephyrproject.org/latest/guides/networking/qemu_setup.html#prerequisites) only supports Linux currently, we provide a utility for this so that you can also test on MacOS. In a separate terminal run:
+```./tools/create_serial_socket.py```
+
 ### Build & Run the Hello Test App
 
-The application can be built by running:
+Back in your main terminal, the application can be built by running:
 ```shell
 cd my-workspace/thrift-for-zephyr
 source ~/.zephyrrc
