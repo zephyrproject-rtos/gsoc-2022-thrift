@@ -3,7 +3,6 @@
 find_program(THRIFT_EXECUTABLE thrift)
 
 message(STATUS "Found thrift executable: ${THRIFT_EXECUTABLE}")
-message(STATUS "Found pkg-config executable: ${PKGCONFIG_EXECUTABLE}")
 
 function(thrift
     target          # CMake target (for dependencies / headers)
