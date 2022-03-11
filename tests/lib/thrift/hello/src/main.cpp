@@ -35,6 +35,9 @@ using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
 
+#define HELLO_SERVER_STACK_SIZE 4096
+static K_THREAD_STACK_DEFINE(hello_server_stack, HELLO_SERVER_STACK_SIZE);
+
 struct ctx
 {
     enum
@@ -63,11 +66,24 @@ static void *server_func(void *arg)
 static void setup(void)
 {
     int rv;
+    pthread_attr_t attr;
+    pthread_attr_t *attrp = &attr;
+
+    if (IS_ENABLED(CONFIG_POSIX_SOC))
+    {
+        attrp = NULL;
+    }
+    else
+    {
+        rv = pthread_attr_init(attrp);
+        zassert_equal(0, rv, "pthread_attr_init failed: %d", rv);
+        rv = pthread_attr_setstack(attrp, hello_server_stack, HELLO_SERVER_STACK_SIZE);
+        zassert_equal(0, rv, "pthread_attr_setstack failed: %d", rv);
+    }
 
     // create the communication channel
     rv = socketpair(AF_UNIX, SOCK_STREAM, 0, &context.fds.front());
-    assert(rv == 0);
-    // zassert_equal(0, rv, "socketpair failed: %d", rv);
+    zassert_equal(0, rv, "socketpair failed: %d", rv);
 
     // set up server
     shared_ptr<HelloHandler> handler(new HelloHandler());
@@ -79,9 +95,8 @@ static void setup(void)
                                                            std::make_shared<TBinaryProtocolFactory>()));
 
     // start the server
-    rv = pthread_create(&context.server_thread, nullptr, server_func, nullptr);
-    assert(rv == 0);
-    // zassert_equal(0, rv, "pthread_create failed: %d", rv);
+    rv = pthread_create(&context.server_thread, attrp, server_func, nullptr);
+    zassert_equal(0, rv, "pthread_create failed: %d", rv);
 }
 
 static void teardown(void)
@@ -96,11 +111,6 @@ static void teardown(void)
     //   serverTransport_->interrupt();
     // }
     context.server->stop();
-
-#ifdef CONFIG_SOC_POSIX
-    // should interrupt read(2), but unfortunately does not allow us to join cleanly
-    kill(getpid(), SIGINT);
-#endif
 
     pthread_join(context.server_thread, &unused);
 
