@@ -13,19 +13,19 @@ public:
 
     void ping()
     {
-        std::cout << "ping" << std::endl;
+        printk("ping\n");
     }
 
     void echo(std::string &_return, const std::string &msg)
     {
-        std::cout << "echo: " << msg << std::endl;
+        printk("echo: %s\n", msg.c_str());
         _return = msg;
     }
 
     int32_t counter()
     {
         ++count;
-        std::cout << "counter: " << count << std::endl;
+        printk("counter: %d\n", count);
         return count;
     }
 
