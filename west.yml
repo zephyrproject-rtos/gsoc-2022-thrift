@@ -15,11 +15,13 @@ manifest:
     - name: thrift
       remote: cfriedt
       path: thrift-for-zephyr/.upstream
-      revision: 9ae087df932c65f8de9e0fc2d12b828b8306b234
+      revision: 6dd80682d406bc9db140e934178fcc103c8836fc
     - name: net-tools
       remote: zephyrproject-rtos
       revision: master
     - name: zephyr
       remote: zephyrproject-rtos
-      revision: main
+      # Remove the need for 'posix/' prefix when including std headers
+      # https://github.com/zephyrproject-rtos/zephyr/pull/43987
+      revision: pull/43987/head
       import: true

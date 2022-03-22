@@ -8,16 +8,10 @@
 #include <memory>
 #include <stdexcept>
 
-#ifdef CONFIG_SOC_POSIX
 #include <pthread.h>
 #include <unistd.h>
 #include <signal.h>
 #include <sys/socket.h>
-#else
-#include <posix/pthread.h>
-#include <posix/unistd.h>
-#include <posix/sys/socket.h>
-#endif
 
 #include "Hello.h"
 #include "HelloHandler.h"
