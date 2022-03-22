@@ -16,6 +16,9 @@ manifest:
       remote: cfriedt
       path: thrift-for-zephyr/.upstream
       revision: 9ae087df932c65f8de9e0fc2d12b828b8306b234
+    - name: net-tools
+      remote: zephyrproject-rtos
+      revision: master
     - name: zephyr
       remote: zephyrproject-rtos
       revision: main
