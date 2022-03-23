@@ -28,12 +28,19 @@ jobs:
           west init -l .
           west update
           pip3 install -r ../zephyr/scripts/requirements-base.txt
-      - name: Build Firmware
+
+      - name: Build and Run Testsuite
         working-directory: thrift-for-zephyr
         run: |
-          west build -p auto -b qemu_x86_64 -s tests/lib/thrift/hello
-      - name: Archive firmware
-        uses: actions/upload-artifact@v2
-        with:
-          name: firmware
-          path: thrift-for-zephyr/build/zephyr/zephyr.*
+          west build -p auto -b qemu_x86_64 -t run tests/lib/thrift/hello
+
+      - name: Build Samples
+        working-directory: thrift-for-zephyr
+        run: |
+          west build -p auto -b qemu_x86_64 samples/lib/thrift/hello_server
+
+#      - name: Archive firmware
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: firmware
+#          path: thrift-for-zephyr/build/zephyr/zephyr.*
