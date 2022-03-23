@@ -61,4 +61,17 @@ Run the testsuite with:
 cd ${WS}/thrift-for-zephyr
 source zephyr-env.sh
 west build -p auto -b qemu_x86_64 -t run tests/lib/thrift/hello
+...
+Booting from ROM..*** Booting Zephyr OS build zephyr-v3.0.0-1366-g1c66e53f7846  ***
+Running test suite thrift_hello
+===================================================================
+START - test_hello
+Starting the server...
+ping
+echo: Hello, world!
+counter: 1
+counter: 2
+counter: 3
+counter: 4
+counter: 5
 ```
