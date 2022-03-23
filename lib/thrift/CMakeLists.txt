@@ -15,14 +15,19 @@ zephyr_include_directories(include)
 zephyr_include_directories(${THRIFT_UPSTREAM}/lib/cpp/src)
 
 zephyr_library_sources(
+  src/_stat.c
+  src/thrift/concurrency/Mutex.cpp
   src/thrift/server/TFDServer.cpp
-  src/thrift/server/TSimpleServer.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/protocol/TProtocol.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/server/TConnectedClient.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/server/TServerFramework.cpp
+  ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/server/TSimpleServer.cpp
+  ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/SocketCommon.cpp
+  ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TBufferTransports.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TFDTransport.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TTransportException.cpp
-  ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TBufferTransports.cpp
+  ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TServerSocket.cpp
+  ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TSocket.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/TApplicationException.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/TOutput.cpp
 )
