@@ -7,6 +7,4 @@ if [ -f ~/.zephyrrc ]; then
 fi
 
 export ZEPHYR_BASE="$(cd "${PWD}"/../zephyr; pwd)"
-if ! echo "${PATH}" | grep -q "scripts"; then
-    export PATH=${ZEPHYR_BASE}/scripts:${PATH}
-fi
+export PATH=${ZEPHYR_BASE}/scripts:${PATH}

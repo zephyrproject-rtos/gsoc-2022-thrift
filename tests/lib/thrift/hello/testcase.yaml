@@ -1,0 +1,4 @@
+tests:
+  thrift.hello:
+    tags: thrift
+    harness: ztest

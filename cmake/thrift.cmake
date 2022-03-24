@@ -15,6 +15,7 @@ function(thrift
 
                     # Generated files in ${ARGN}
     )
+  file(MAKE_DIRECTORY ${out_dir})
   add_custom_command(
     OUTPUT ${ARGN}
     COMMAND
