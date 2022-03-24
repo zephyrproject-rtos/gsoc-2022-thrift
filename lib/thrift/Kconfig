@@ -9,7 +9,7 @@ config THRIFT
   depends on STD_CPP17
   depends on EXCEPTIONS
   depends on POSIX_API
-  depends on NET_SOCKETPAIR
+  depends on EVENTFD
   help
     Enable this option to support Apache Thrift
 endmenu
