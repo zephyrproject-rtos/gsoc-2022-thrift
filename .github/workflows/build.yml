@@ -29,7 +29,7 @@ jobs:
           west update
           pip3 install -r ../zephyr/scripts/requirements-base.txt
 
-      - name: Build Testsuite
+      - name: Build and Run Testsuite
         working-directory: thrift-for-zephyr
         run: |
           west build -p auto -b qemu_x86_64 tests/lib/thrift/hello
