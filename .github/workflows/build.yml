@@ -18,6 +18,7 @@ jobs:
       - name: Initialize
         working-directory: thrift-for-zephyr
         run: |
+          echo "PATH=$PWD/../zephyr/scripts:$PATH" >> $GITHUB_ENV
           wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/libthriftc_${THRIFT_VERSION}-1.x86_64.deb
           wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/libthrift_${THRIFT_VERSION}-1.x86_64.deb
           wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/thrift_${THRIFT_VERSION}-1.x86_64.deb
@@ -29,15 +30,15 @@ jobs:
           west update
           pip3 install -r ../zephyr/scripts/requirements-base.txt
 
-      - name: Build Testsuite
+      - name: Build and run Testsuite
         working-directory: thrift-for-zephyr
         run: |
-          west build -p auto -b qemu_x86_64 tests/lib/thrift/hello
+          twister -i -p qemu_x86_64 -T tests/lib/thrift/hello
 
       - name: Build Samples
         working-directory: thrift-for-zephyr
         run: |
-          west build -p auto -b qemu_x86_64 samples/lib/thrift/hello_server
+          twister -b -p qemu_x86_64 -T samples/lib/thrift/hello_server
 
 #      - name: Archive firmware
 #        uses: actions/upload-artifact@v2
