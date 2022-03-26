@@ -1,3 +1,8 @@
+sample:
+  description: Hello Thrift sample
+  name: hello thrift
+common:
+  tags: samples thrift cpp
 common:
   tags: thrift cpp
 tests:

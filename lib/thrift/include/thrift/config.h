@@ -267,7 +267,11 @@
 #define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <sys/un.h> header file. */
+#ifdef CONFIG_ARCH_POSIX
+#define HAVE_SYS_UN_H 1
+#else
 /* #undef HAVE_SYS_UN_H */
+#endif
 
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
 #define HAVE_SYS_WAIT_H 1

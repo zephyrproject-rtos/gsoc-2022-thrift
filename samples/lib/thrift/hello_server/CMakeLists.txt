@@ -8,6 +8,8 @@ FILE(GLOB app_sources
     src/*.cpp
 )
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake/thrift.cmake)
+
 set(generated_sources "")
 set(gen_dir ${ZEPHYR_BINARY_DIR}/misc/generated/thrift_hello)
 list(APPEND generated_sources ${gen_dir}/gen-cpp/hello_types.h)

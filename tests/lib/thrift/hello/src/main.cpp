@@ -50,9 +50,7 @@ static void *server_func(void *arg)
 {
     (void)arg;
 
-    printk("Starting the server...\n");
     context.server->serve();
-    printk("Server is done\n");
 
     return nullptr;
 }
@@ -63,7 +61,7 @@ static void setup(void)
     pthread_attr_t attr;
     pthread_attr_t *attrp = &attr;
 
-    if (IS_ENABLED(CONFIG_POSIX_SOC))
+    if (IS_ENABLED(CONFIG_ARCH_POSIX))
     {
         attrp = NULL;
     }
@@ -97,13 +95,6 @@ static void teardown(void)
 {
     void *unused;
 
-    // Note: ATM, server->stop() does nothing for TFDServer
-    // since we have not implemented interrupt() and interruptChildren()
-    //
-    // stop() {
-    //   serverTransport_->interruptChildren();
-    //   serverTransport_->interrupt();
-    // }
     context.server->stop();
 
     pthread_join(context.server_thread, &unused);
