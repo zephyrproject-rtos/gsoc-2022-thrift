@@ -3,9 +3,7 @@
 cmake_minimum_required(VERSION 3.13.1)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
-set(THRIFT_UPSTREAM "${ZEPHYR_CURRENT_MODULE_DIR}/.upstream")
-
-include(${ZEPHYR_CURRENT_MODULE_DIR}/cmake/thrift.cmake)
+set(THRIFT_UPSTREAM "${CMAKE_CURRENT_SOURCE_DIR}/../../.upstream")
 
 # needed in order to expose some C++ class definitions in Newlib
 target_compile_definitions(app PUBLIC _GLIBCXX_HAS_GTHREADS=1)
