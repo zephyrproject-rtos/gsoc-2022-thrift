@@ -57,6 +57,7 @@ jobs:
         working-directory: thrift-for-zephyr
         shell: bash
         run: |
+          make -j -C samples/lib/thrift/hello_client
           make -j -C samples/lib/thrift/hello_server
 
 #      - name: Archive firmware
