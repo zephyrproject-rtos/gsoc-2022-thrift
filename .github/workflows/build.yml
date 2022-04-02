@@ -10,24 +10,27 @@ jobs:
     env:
       THRIFT_VERSION: 0.16.0
       CMAKE_PREFIX_PATH: /opt/toolchains
+      # To prevent apt from prompting the user to enter locale info
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           path: thrift-for-zephyr
 
+      - name: Update APT package database
+        working-directory: /
+        shell: bash
+        run: |
+          apt-get update
+
       - name: Install Thrift
         working-directory: /
         shell: bash
         run: |
-          wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/libthriftc_${THRIFT_VERSION}-1.x86_64.deb
-          wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/libthrift_${THRIFT_VERSION}-1.x86_64.deb
-          wget https://github.com/cfriedt/thrift-debs/releases/download/v${THRIFT_VERSION}/thrift_${THRIFT_VERSION}-1.x86_64.deb
-          dpkg -i libthriftc_${THRIFT_VERSION}-1.x86_64.deb
-          dpkg -i libthrift_${THRIFT_VERSION}-1.x86_64.deb
-          dpkg -i thrift_${THRIFT_VERSION}-1.x86_64.deb
+          apt install -y libboost-all-dev thrift-compiler libthrift-dev
 
-      - name: Initialize
+      - name: Initialize Project with West
         working-directory: thrift-for-zephyr
         shell: bash
         run: |
@@ -49,6 +52,12 @@ jobs:
         run: |
           source zephyr-env.sh
           twister -i --build-only -W -T samples/
+
+      - name: Build Samples (POSIX)
+        working-directory: thrift-for-zephyr
+        shell: bash
+        run: |
+          make -j -C samples/lib/thrift/hello_server
 
 #      - name: Archive firmware
 #        uses: actions/upload-artifact@v2

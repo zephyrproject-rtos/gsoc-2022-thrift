@@ -1,5 +1,11 @@
 #pragma once
 
+#ifdef __ZEPHYR__
+#include <zephyr.h>
+#else
+#define printk printf
+#endif
+
 #include <iostream>
 
 #include "Hello.h"
