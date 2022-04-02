@@ -10,3 +10,6 @@
 # build
 /build*
 /twister-out*/
+
+# thrift
+gen-cpp

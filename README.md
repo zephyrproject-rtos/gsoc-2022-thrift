@@ -13,9 +13,16 @@ environment by following the official
 [Zephyr Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html).
 
 ### Installing Thrift Binary
-Aside from the dependencies in the Zephyr Getting Started Guide above, you will also need to install Thrift. On MacOS, you can use:
 
-```brew install thrift```
+**MacOS**
+```shell
+brew install thrift
+```
+
+**Ubuntu**
+```shell
+apt install -y libboost-all-dev thrift-compiler libthrift-dev
+```
 
 ### Initialization
 
@@ -41,6 +48,13 @@ export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
 export ZEPHYR_SDK_INSTALL_DIR=~/zephyr-sdk-0.13.1
 ```
 
+For networked examples (Linux-only for now), run the following to build additional
+network utilities.
+```shell
+cd ${WS}/net-tools
+make
+```
+
 ### Qemu Setup
 
 When running Zephyr inside of Qemu, a UNIX domain socket is used as a virtual serial port.
@@ -50,9 +64,12 @@ Run this command in the background (with `&`). Later, the process can be stopped
 ${WS}/net-tools/loop-socat.sh &
 ```
 
-Additionally, Qemu user-mode networking is used, and we forward incoming TCP/IP traffic
-on port 4242 to the Qemu instance.
-
+For networked examples (Linux-only for now), do the following:
+```
+sudo ${WS}/net-tools/loop-slip-tap.sh
+# Enter password when prompted
+# press Ctrl+Z to background the process
+```
 
 ### Build & Run the Testsuite
 
@@ -63,6 +80,7 @@ source zephyr-env.sh
 west build -p auto -b qemu_x86_64 -t run tests/lib/thrift/hello
 ...
 Booting from ROM..
+SeaBIOS (version rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org)
 *** Booting Zephyr OS build zephyr-v3.0.0-1366-g1c66e53f7846  ***
 Running test suite thrift_hello
 ===================================================================
@@ -81,4 +99,45 @@ Server is done
 Test suite thrift_hello succeeded
 ===================================================================
 PROJECT EXECUTION SUCCESSFUL
+```
+
+### Build & Run the Hello Server Sample App
+
+Run the hello_server sample application with:
+```shell
+cd ${WS}/thrift-for-zephyr
+source zephyr-env.sh
+west build -p auto -b qemu_x86_64 -t run samples/lib/thrift/hello_server
+...
+Booting from ROM..
+SeaBIOS (version rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org)
+*** Booting Zephyr OS build zephyr-v3.0.0-1366-gca26ff490759  ***
+
+
+[00:00:00.010,000] <inf> net_config: Initializing network
+[00:00:00.010,000] <inf> net_config: IPv4 address: 192.0.2.1
+[00:00:00.110,000] <inf> net_config: IPv6 address: 2001:db8::1
+[00:00:00.110,000] <inf> net_config: IPv6 address: 2001:db8::1
+uart:~$ 
+```
+
+Note, the `uart:~$` prompt is for the [Zephyr Shell](https://docs.zephyrproject.org/latest/reference/shell/index.html), which has a slew of really useful utilities! Use the autocomplete feature by pressing `TAB` to discover which commands are available.
+
+From another terminal, build and run the `hello_client` sample app compiled for the host OS.
+
+```shell
+make -j -C samples/lib/thrift/hello_client
+./samples/lib/thrift/hello_client/hello_client
+make -j -C samples/lib/thrift/hello_client clean
+```
+
+You should observe the following in the original `hello_server` terminal:
+```
+ping
+echo: Hello, world!
+counter: 1
+counter: 2
+counter: 3
+counter: 4
+counter: 5
 ```
