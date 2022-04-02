@@ -71,6 +71,9 @@ sudo ${WS}/net-tools/loop-slip-tap.sh
 # press Ctrl+Z to background the process
 ```
 
+Support for networked examples under macOS is a [work-in-progress](https://github.com/zephyrproject-rtos/zephyr/issues/15738). Thank you for your patience.
+
+
 ### Build & Run the Testsuite
 
 Run the testsuite with:
@@ -103,7 +106,9 @@ PROJECT EXECUTION SUCCESSFUL
 
 ### Build & Run the Hello Server Sample App
 
-Run the hello_server sample application with:
+This only works in Linux, for now.
+
+Run the `hello_server` sample application with:
 ```shell
 cd ${WS}/thrift-for-zephyr
 source zephyr-env.sh
@@ -129,6 +134,49 @@ From another terminal, build and run the `hello_client` sample app compiled for 
 make -j -C samples/lib/thrift/hello_client
 ./samples/lib/thrift/hello_client/hello_client
 make -j -C samples/lib/thrift/hello_client clean
+```
+
+You should observe the following in the original `hello_server` terminal:
+```
+ping
+echo: Hello, world!
+counter: 1
+counter: 2
+counter: 3
+counter: 4
+counter: 5
+```
+
+### Build & Run the Hello Client Sample App
+
+This only works in Linux, for now.
+
+First, from another terminal, build and run the `hello_server` sample app compiled for the host OS.
+
+```shell
+make -j -C samples/lib/thrift/hello_server
+./samples/lib/thrift/hello_client/hello_server 0.0.0.0
+```
+
+Then, in annother terminal, run the `hello_client` sample application with:
+```shell
+cd ${WS}/thrift-for-zephyr
+source zephyr-env.sh
+west build -p auto -b qemu_x86_64 -t run samples/lib/thrift/hello_client \
+    -DCONFIG_NET_CONFIG_NEED_IPV6=n \
+    -DCONFIG_NET_CONFIG_MY_IPV4_ADDR=\"192.0.2.1\" \
+    -DCONFIG_NET_CONFIG_PEER_IPV4_ADDR=\"192.0.2.2\"
+...
+Booting from ROM..
+SeaBIOS (version rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org)
+*** Booting Zephyr OS build zephyr-v3.0.0-1366-gca26ff490759  ***
+
+
+[00:00:00.010,000] <inf> net_config: Initializing network
+[00:00:00.010,000] <inf> net_config: IPv4 address: 192.0.2.1
+[00:00:00.110,000] <inf> net_config: IPv6 address: 2001:db8::1
+[00:00:00.110,000] <inf> net_config: IPv6 address: 2001:db8::1
+uart:~$ 
 ```
 
 You should observe the following in the original `hello_server` terminal:
