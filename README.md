@@ -1,6 +1,69 @@
 # Thrift for Zephyr
 
-This repository contains a Zephyr module to support Thrift.
+<table>
+<tr>
+<td><img src="https://github.com/apache/thrift/raw/master/doc/images/thrift-layers.png" width="392"/></td>
+<td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Zephyr_RTOS_logo_2015.svg/640px-Zephyr_RTOS_logo_2015.svg.png" width="320"/></td>
+<td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Google_Summer_of_Code_sun_logo_2022.svg/480px-Google_Summer_of_Code_sun_logo_2022.svg.png" width="240"/></td>
+</tr>
+</table>
+
+[Thrift](https://github.com/apache/thrift) is an [IDL](https://en.wikipedia.org/wiki/Interface_description_language) specification, [RPC](https://en.wikipedia.org/wiki/Remote_procedure_call) framework, and [code generator](https://en.wikipedia.org/wiki/Automatic_programming). It works across all major operating systems, supports over 27 programming languages, 7 protocols, and 6 low-level transports. Thrift was originally developed at [Facebook in 2007](https://thrift.apache.org/static/files/thrift-20070401.pdf). Subsequently, it was donated to the [Apache Software Foundation](https://www.apache.org/). Thrift supports a rich set of types and data structures, and abstracts away transport and protocol details, which lets developers focus on application logic.
+
+The [Zephyr Real-Time Operating System](https://zephyrproject.org/) was [adopted by The Linux Foundation in 2016](https://en.wikipedia.org/wiki/Zephyr_(operating_system)). It is mainly written in [C](https://en.wikipedia.org/wiki/C_(programming_language)), with tooling in [Python](https://www.python.org/) and [CMake](https://cmake.org/). Zephyr is configured using [Kconfig](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html) and [DeviceTree](https://www.devicetree.org/) much like [the Linux kernel](https://en.wikipedia.org/wiki/Linux). With a strong focus on [IoT](https://en.wikipedia.org/wiki/Internet_of_things), Zephyr has first-class support for a wide array of different network protocols and libraries. Zephyr supports IP networking over a number of physical layers ranging from [IEEE 802.15.4](https://en.wikipedia.org/wiki/IEEE_802.15.4) and [BLE](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy) to [CAN](https://en.wikipedia.org/wiki/CAN_bus), [WiFi](https://en.wikipedia.org/wiki/Wi-Fi), and [Ethernet](https://en.wikipedia.org/wiki/Ethernet). Although built for IoT, Zephyr scales from tiny Xtensa cores with 4kB of SRAM to AArch64 servers with hundreds of cores and GiB of DDR SDRAM.
+
+## About This Project
+
+The concept for this project originated around 2014 while developing a custom UNIX-like proprietary RTOS for IoT applications. The concept was reinforced year after year, observing that several companies had developed their own serialization and deserialization protocols which often lacked robustness of other established and standardized protocols. Moreover, the stacks would require a rather large effort to rework whenever the hardware platform or physical transport changed.
+
+After becoming familiar with the concept of [automatic programming](https://en.wikipedia.org/wiki/Automatic_programming), looking at older solutions such as [ASN.1](https://en.wikipedia.org/wiki/ASN.1), [SunRPC](https://en.wikipedia.org/wiki/Sun_RPC) as well as newer solutions such as [Protocol Buffers](https://en.wikipedia.org/wiki/Protocol_Buffers) and [gRPC](https://grpc.io/), Thrift was beginning to seem very appealing.
+
+Many years later, in March of 2022, during a Hackathon at [Meta](https://meta.com/), a group of [Meta Engineers](https://engineering.fb.com) came together because they knew there was a better way to communicate with firmware using Thrift. Zephyr was a clear winner in the RTOS market due to
+* support for standards such as [POSIX](https://en.wikipedia.org/wiki/POSIX) and [BSD Sockets](https://en.wikipedia.org/wiki/Berkeley_sockets)
+* support for a huge number of standardized physical layer protocols
+* making the right choice to use Kconfig for software configuration and DevcieTree for hardware configuration
+* and lastly, because the Zephyr community was an incredibly welcoming and positive space
+
+The Hackathon became a success in just a few days!
+
+# Google Summer of Code, 2022
+
+As announced on the [Linux Foundation Wiki](https://wiki.linuxfoundation.org/gsoc/2022-gsoc-zephyr), this project was selected for the [Google Summer of Code](https://summerofcode.withgoogle.com/) under the umbrella of the [Linux Foundation](https://linuxfoundation.org).
+
+## Mission Statement
+
+Students! Your mission, should you choose to accept it, is:
+1. Get this module in shape for upstreaming to the [Zephyr Project's GitHub](https://github.com/zephyrproject-rtos) (**MANDATORY**)
+1. Ensure the module follows appropriate [coding guidelines](https://docs.zephyrproject.org/latest/contribute/coding_guidelines/index.html) and satisfies [module requirements](https://docs.zephyrproject.org/latest/guides/modules.html) (**MANDATORY**)
+1. Perform additional integration of Thrift low-level transports such as TLS, and Memory Buffers (**One Or More**)
+1. Perform additional integration of Thrift transports such as zlib, and HTTP (**One Or More**)
+1. Perform additional integration of Thrift protocols such as Compact, and JSON (**One Or More**)
+1. Author additional sample applications using [supported boards](https://docs.zephyrproject.org/latest/boards/index.html) or [Qemu](https://docs.zephyrproject.org/latest/guides/networking/qemu_setup.html) (**MANDATORY**)
+1. Author additional tests and generate coverage reports using the [Zephyr Test Framework](https://docs.zephyrproject.org/latest/guides/test/ztest.html) (**MANDATORY**)
+1. Be prepared to write a blog post and create a demo video for the Linux Foundation!
+
+> **Note** Although Zephyr is mainly written in C, it does support a subset of C++ and `thrift-for-zephyr` does primarily use C++. However, we do welcome the possibility of additional langauge support.
+
+## Resources
+
+Students have access to 2 highly-skilled mentors, as well as the (fantastic!) [Zephyr Developer Community](https://www.zephyrproject.org/community/) via [Discord](https://discord.com/invite/zephyrproject). Naturally, there is also a vast quantity of [Zephyr documentation](https://docs.zephyrproject.org/latest/) and [Thrift documentation](https://thrift.apache.org/docs). Additionally, to facilitate wicked-cool demo videos, the successful applicant may receive some swag in the form of dev boards, stickers, and other stuff.
+
+Truthfully, this is a challenging project. Aside from the vast quantity of highly-sought-after skills that the successful padawan would learn, they would also earn a respectable amount of geek-cred. Did we mention stickers?
+
+## Applicants
+
+For those interested, please **<big>[REGISTER HERE](https://summerofcode.withgoogle.com/register/contributor)<big>**. In the application, please consicely describe
+* relevant experience with the Zephyr RTOS (with URLs if possible)
+* relevant experience with Apache Thrift (with URLs if possible)
+* relevant experience with C++ (with URLs if possible)
+* relevant experience with Git (GitHub username, with a list of past projects if possible)
+* a list of milestones (deliverables + dates) taken from the above mission statement
+* a paragraph describing rationale for the proposed deliverables and how they would benefit the Zephyr + Linux developer community
+* a YouTube video successfully demonstrating reproduced build + run of each of the tests and sample applications in this project
+
+May the odds be ever in your favour!
+
+# Project Details
 
 ## Build Status
 
