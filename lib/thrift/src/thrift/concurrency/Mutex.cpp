@@ -1,3 +1,9 @@
+/*
+ * Copyright 2022 Meta
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <thrift/concurrency/Mutex.h>
 
 namespace apache

@@ -1,3 +1,4 @@
+# Copyright 2022 Meta
 # SPDX-License-Identifier: Apache-2.0
 
 find_program(THRIFT_EXECUTABLE thrift)
