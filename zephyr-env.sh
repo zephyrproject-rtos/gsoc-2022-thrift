@@ -1,3 +1,6 @@
+# Copyright 2022 Meta
+# SPDX-License-Identifier: Apache-2.0
+
 if [ ! -f ${PWD}/zephyr-env.sh ]; then
     echo "Please source this script from the 'thrift-for-zephyr' directory"
     exit 1
