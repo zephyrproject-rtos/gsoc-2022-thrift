@@ -3,8 +3,8 @@ sample:
   name: hello thrift
 common:
   tags: samples thrift cpp
-common:
-  tags: thrift cpp
+  # FIXME: zephyrproject-rtos/zephyr#45100
+  arch_exclude: posix
 tests:
   thrift.hello.newlib:
     filter: TOOLCHAIN_HAS_NEWLIB == 1
@@ -12,9 +12,9 @@ tests:
     platform_exclude: qemu_x86 qemu_leon3 qemu_malta qemu_malta_be
     arch_exclude: arc xtensa
     tags: newlib
-  thrift.hello.native:
-    arch_allow: posix
-    tags: native
+#  thrift.hello.native:
+#    arch_allow: posix
+#    tags: native
   thrift.hello.arcmwdtlib:
     toolchain_allow: arcmwdt
     platform_allow: nsim_hs nsim_em
