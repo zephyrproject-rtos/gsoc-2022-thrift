@@ -10,31 +10,23 @@
 
 #include "Hello.h"
 
-class HelloHandler : virtual public HelloIf
-{
+class HelloHandler : virtual public HelloIf {
 public:
-    HelloHandler() : count(0)
-    {
-    }
+  HelloHandler() : count(0) {}
 
-    void ping()
-    {
-        printk("ping\n");
-    }
+  void ping() { printk("ping\n"); }
 
-    void echo(std::string &_return, const std::string &msg)
-    {
-        printk("echo: %s\n", msg.c_str());
-        _return = msg;
-    }
+  void echo(std::string& _return, const std::string& msg) {
+    printk("echo: %s\n", msg.c_str());
+    _return = msg;
+  }
 
-    int32_t counter()
-    {
-        ++count;
-        printk("counter: %d\n", count);
-        return count;
-    }
+  int32_t counter() {
+    ++count;
+    printk("counter: %d\n", count);
+    return count;
+  }
 
 protected:
-    int count;
+  int count;
 };

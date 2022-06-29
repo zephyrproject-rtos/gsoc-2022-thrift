@@ -28,10 +28,9 @@
 #define NI_MAXSERV 3
 
 /* sneaking this in here to avoid changing zephyr's <sys/socket.h> */
-struct linger
-{
-    int l_onoff;  /* option on/off */
-    int l_linger; /* linger time */
+struct linger {
+  int l_onoff;  /* option on/off */
+  int l_linger; /* linger time */
 };
 
 #endif

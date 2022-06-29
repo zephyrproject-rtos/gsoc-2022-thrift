@@ -27,20 +27,17 @@ using namespace apache::thrift::transport;
 #ifdef __ZEPHYR__
 void main(void)
 #else
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 #endif
 {
-  ::std::string my_addr;
+  std::string my_addr;
 
 #ifdef __ZEPHYR__
   my_addr = CONFIG_NET_CONFIG_PEER_IPV4_ADDR;
 #else
-  if (argc >= 2)
-  {
+  if (argc >= 2) {
     my_addr = std::string(argv[1]);
-  }
-  else
-  {
+  } else {
     my_addr = "192.0.2.1";
   }
 #endif
@@ -51,20 +48,16 @@ int main(int argc, char **argv)
   std::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
   HelloClient client(protocol);
 
-  try
-  {
+  try {
     transport->open();
     client.ping();
     std::string s;
     client.echo(s, "Hello, world!");
-    for (int i = 0; i < 5; ++i)
-    {
+    for (int i = 0; i < 5; ++i) {
       client.counter();
     }
     transport->close();
-  }
-  catch (std::exception &e)
-  {
+  } catch (std::exception& e) {
     printf("caught exception: %s\n", e.what());
 #ifndef __ZEPHYR__
     return EXIT_FAILURE;
