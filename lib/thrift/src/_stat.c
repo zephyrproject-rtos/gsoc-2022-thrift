@@ -9,12 +9,11 @@
 
 #include <zephyr.h>
 
-int stat(const char *restrict path, struct stat *restrict buf)
-{
-    ARG_UNUSED(path);
-    ARG_UNUSED(buf);
+int stat(const char* restrict path, struct stat* restrict buf) {
+  ARG_UNUSED(path);
+  ARG_UNUSED(buf);
 
-    errno = ENOTSUP;
+  errno = ENOTSUP;
 
-    return -1;
+  return -1;
 }

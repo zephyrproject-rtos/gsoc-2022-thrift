@@ -6,35 +6,27 @@
 
 #include <thrift/concurrency/Mutex.h>
 
-namespace apache
-{
-    namespace thrift
-    {
-        namespace concurrency
-        {
+namespace apache {
+namespace thrift {
+namespace concurrency {
 
-            Mutex::Mutex() {}
+Mutex::Mutex() {}
 
-            void Mutex::lock() const {}
+void Mutex::lock() const {}
 
-            bool Mutex::trylock() const
-            {
-                return false;
-            }
+bool Mutex::trylock() const {
+  return false;
+}
 
-            bool Mutex::timedlock(int64_t milliseconds) const
-            {
-                return false;
-            }
+bool Mutex::timedlock(int64_t milliseconds) const {
+  return false;
+}
 
-            void Mutex::unlock() const
-            {
-            }
+void Mutex::unlock() const {}
 
-            void *Mutex::getUnderlyingImpl() const
-            {
-                return nullptr;
-            }
-        }
-    }
-} // apache::thrift::concurrency
+void* Mutex::getUnderlyingImpl() const {
+  return nullptr;
+}
+} // namespace concurrency
+} // namespace thrift
+} // namespace apache

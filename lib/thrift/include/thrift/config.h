@@ -341,10 +341,10 @@
 #define SELECT_TYPE_ARG1 int
 
 /* Define to the type of args 2, 3 and 4 for `select'. */
-#define SELECT_TYPE_ARG234 (fd_set *)
+#define SELECT_TYPE_ARG234 (fd_set*)
 
 /* Define to the type of arg 5 for `select'. */
-#define SELECT_TYPE_ARG5 (struct timeval *)
+#define SELECT_TYPE_ARG5 (struct timeval*)
 
 /* Indicates the effect of the right shift operator on negative signed
    integers */
