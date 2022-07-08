@@ -28,40 +28,11 @@ The Hackathon became a success in just a few days!
 
 # Google Summer of Code, 2022
 
-As announced on the [Linux Foundation Wiki](https://wiki.linuxfoundation.org/gsoc/2022-gsoc-zephyr), this project was selected for the [Google Summer of Code](https://summerofcode.withgoogle.com/) under the umbrella of the [Linux Foundation](https://linuxfoundation.org).
+As announced on the [Linux Foundation Wiki](https://wiki.linuxfoundation.org/gsoc/2022-gsoc-zephyr), this project was selected for the [Google Summer of Code](https://summerofcode.withgoogle.com/) under the umbrella of the [Linux Foundation](https://linuxfoundation.org). View the accepted proposal [here](https://summerofcode.withgoogle.com/proposals/details/CROr49Ia).
 
-## Mission Statement
+The progress of this project is tracked in [the project board](https://github.com/orgs/zephyrproject-rtos/projects/11) and visualized with [ganttlab](https://www.ganttlab.com/). Check our weekly update:
 
-Students! Your mission, should you choose to accept it, is:
-1. Get this module in shape for upstreaming to the [Zephyr Project's GitHub](https://github.com/zephyrproject-rtos) (**MANDATORY**)
-1. Ensure the module follows appropriate [coding guidelines](https://docs.zephyrproject.org/latest/contribute/coding_guidelines/index.html) and satisfies [module requirements](https://docs.zephyrproject.org/latest/guides/modules.html) (**MANDATORY**)
-1. Perform additional integration of Thrift low-level transports such as TLS, and Memory Buffers (**One Or More**)
-1. Perform additional integration of Thrift transports such as zlib, and HTTP (**One Or More**)
-1. Perform additional integration of Thrift protocols such as Compact, and JSON (**One Or More**)
-1. Author additional sample applications using [supported boards](https://docs.zephyrproject.org/latest/boards/index.html) or [Qemu](https://docs.zephyrproject.org/latest/guides/networking/qemu_setup.html) (**MANDATORY**)
-1. Author additional tests and generate coverage reports using the [Zephyr Test Framework](https://docs.zephyrproject.org/latest/guides/test/ztest.html) (**MANDATORY**)
-1. Be prepared to write a blog post and create a demo video for the Linux Foundation!
-
-> **Note** Although Zephyr is mainly written in C, it does support a subset of C++ and `thrift-for-zephyr` does primarily use C++. However, we do welcome the possibility of additional langauge support.
-
-## Resources
-
-Students have access to 2 highly-skilled mentors, as well as the (fantastic!) [Zephyr Developer Community](https://www.zephyrproject.org/community/) via [Discord](https://discord.com/invite/zephyrproject). Naturally, there is also a vast quantity of [Zephyr documentation](https://docs.zephyrproject.org/latest/) and [Thrift documentation](https://thrift.apache.org/docs). Additionally, to facilitate wicked-cool demo videos, the successful applicant may receive some swag in the form of dev boards, stickers, and other stuff.
-
-Truthfully, this is a challenging project. Aside from the vast quantity of highly-sought-after skills that the successful padawan would learn, they would also earn a respectable amount of geek-cred. Did we mention stickers?
-
-## Applicants
-
-For those interested, please **<big>[REGISTER HERE](https://summerofcode.withgoogle.com/register/contributor)<big>**. In the application, please consicely describe
-* relevant experience with the Zephyr RTOS (with URLs if possible)
-* relevant experience with Apache Thrift (with URLs if possible)
-* relevant experience with C++ (with URLs if possible)
-* relevant experience with Git (GitHub username, with a list of past projects if possible)
-* a list of milestones (deliverables + dates) taken from the above mission statement
-* a paragraph describing rationale for the proposed deliverables and how they would benefit the Zephyr + Linux developer community
-* a YouTube video successfully demonstrating reproduced build + run of each of the tests and sample applications in this project
-
-May the odds be ever in your favour!
+![Gantt chart](doc/gantt/latest.png)
 
 # Project Details
 
@@ -96,7 +67,7 @@ that by running:
 ```shell
 export WS=~/my-workspace
 # initialize my-workspace for thrift-for-zephyr (main branch)
-west init -m https://github.com/cfriedt/thrift-for-zephyr --mr main ${WS}
+west init -m https://github.com/zephyrproject-rtos/gsoc-2022-thrift --mr main ${WS}
 # update Zephyr modules
 cd ${WS}
 west update
@@ -218,7 +189,7 @@ First, from another terminal, build and run the `hello_server` sample app compil
 
 ```shell
 make -j -C samples/lib/thrift/hello_server
-./samples/lib/thrift/hello_client/hello_server 0.0.0.0
+./samples/lib/thrift/hello_server/hello_server 0.0.0.0
 ```
 
 Then, in annother terminal, run the `hello_client` sample application with:
