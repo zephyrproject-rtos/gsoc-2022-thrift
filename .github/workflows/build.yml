@@ -44,7 +44,7 @@ jobs:
         shell: bash
         run: |
           source zephyr-env.sh
-          twister -i --emulation-only -T tests/
+          twister -i -G -T tests/
 
       - name: Build Samples
         working-directory: thrift-for-zephyr
