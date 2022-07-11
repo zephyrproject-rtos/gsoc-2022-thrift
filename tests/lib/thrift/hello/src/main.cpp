@@ -41,17 +41,41 @@ struct ctx {
   };
 
   std::array<int, CLIENT + 1> fds;
+  std::shared_ptr<HelloClient> client;
+  std::shared_ptr<TServer> server;
   pthread_t server_thread;
-  shared_ptr<TServer> server;
 };
+
 static ctx context;
 
 static void* server_func(void* arg) {
   (void)arg;
 
-  context.server->serve();
+  try {
+    context.server->serve();
+  } catch (...) {
+  }
 
   return nullptr;
+}
+
+static std::shared_ptr<HelloClient> setup_client() {
+  std::shared_ptr<TTransport> trans(new TFDTransport(context.fds[ctx::CLIENT]));
+  std::shared_ptr<TTransport> transport(new TBufferedTransport(trans));
+  std::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
+  transport->open();
+  return std::make_shared<HelloClient>(protocol);
+}
+
+std::shared_ptr<TServer> setup_server() {
+  std::shared_ptr<HelloHandler> handler(new HelloHandler());
+  std::shared_ptr<TProcessor> processor(new HelloProcessor(handler));
+  std::shared_ptr<TServerTransport> serverTransport(new TFDServer(context.fds[ctx::SERVER]));
+  std::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+  std::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+  TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+  return std::shared_ptr<TServer>(
+      new TSimpleServer(processor, serverTransport, transportFactory, protocolFactory));
 }
 
 static void setup(void) {
@@ -73,12 +97,10 @@ static void setup(void) {
   zassert_equal(0, rv, "socketpair failed: %d", rv);
 
   // set up server
-  shared_ptr<HelloHandler> handler(new HelloHandler());
-  shared_ptr<TProcessor> processor(new HelloProcessor(handler));
-  shared_ptr<TServerTransport> strans(new TFDServer(context.fds[ctx::SERVER]));
-  context.server = shared_ptr<TServer>(
-      new TSimpleServer(processor, strans, std::make_shared<TBufferedTransportFactory>(),
-                        std::make_shared<TBinaryProtocolFactory>()));
+  context.server = setup_server();
+
+  // set up client
+  context.client = setup_client();
 
   // start the server
   rv = pthread_create(&context.server_thread, attrp, server_func, nullptr);
@@ -88,32 +110,42 @@ static void setup(void) {
 static void teardown(void) {
   void* unused;
 
-  context.server->stop();
+  try {
+    context.server->stop();
+  } catch (...) {
+  }
 
-  pthread_join(context.server_thread, &unused);
+  zassert_ok(pthread_join(context.server_thread, &unused), "");
+
+  context.client = nullptr;
+  context.server = nullptr;
 
   for (auto& fd : context.fds) {
     close(fd);
   }
 }
 
-static void test_hello(void) {
-  std::shared_ptr<TTransport> trans(new TFDTransport(context.fds[ctx::CLIENT]));
-  std::shared_ptr<TTransport> transport(new TBufferedTransport(trans));
-  std::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
-  HelloClient client(protocol);
+static void test_ping(void) {
+  context.client->ping();
+}
 
-  transport->open();
-  client.ping();
+static void test_hello(void) {
   string s;
-  client.echo(s, "Hello, world!");
-  for (int i = 0; i < 5; ++i) {
-    client.counter();
+
+  context.client->echo(s, "Hello, world!");
+  zassert_equal(s, "Hello, world!", "");
+}
+
+static void test_counter(void) {
+  for (int i = 1; i <= 5; ++i) {
+    zassert_equal(i, context.client->counter(), "");
   }
 }
 
 void test_main(void) {
 
-  ztest_test_suite(thrift_hello, ztest_unit_test_setup_teardown(test_hello, setup, teardown));
+  ztest_test_suite(thrift_hello, ztest_unit_test_setup_teardown(test_ping, setup, teardown),
+                   ztest_unit_test_setup_teardown(test_hello, setup, teardown),
+                   ztest_unit_test_setup_teardown(test_counter, setup, teardown));
   ztest_run_test_suite(thrift_hello);
 }
