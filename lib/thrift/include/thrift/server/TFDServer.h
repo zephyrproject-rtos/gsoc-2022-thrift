@@ -21,16 +21,16 @@ public:
   TFDServer(int fd);
   virtual ~TFDServer();
 
-  virtual bool isOpen() const;
-  virtual THRIFT_SOCKET getSocketFD();
-  virtual void close();
+  virtual bool isOpen() const override;
+  virtual THRIFT_SOCKET getSocketFD() override;
+  virtual void close() override;
 
   virtual void interrupt() override;
   virtual void interruptChildren() override;
 
 protected:
   TFDServer() : TFDServer(-1){};
-  virtual std::shared_ptr<TTransport> acceptImpl();
+  virtual std::shared_ptr<TTransport> acceptImpl() override;
 
   int fd;
   std::vector<std::shared_ptr<TTransport>> children;
