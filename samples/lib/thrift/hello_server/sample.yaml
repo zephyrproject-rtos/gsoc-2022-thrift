@@ -2,22 +2,18 @@ sample:
   description: Hello Thrift sample
   name: hello thrift
 common:
-  tags: samples thrift cpp
+  tags: thrift cpp
   # FIXME: zephyrproject-rtos/zephyr#45100
   arch_exclude: posix
+  filter: TOOLCHAIN_HAS_NEWLIB == 1
+  toolchain_exclude: xcc
+  arch_exclude: arc xtensa
+  integration_platforms:
+    - mps2_an385
+    - qemu_x86_64
 tests:
   thrift.hello.newlib:
-    filter: TOOLCHAIN_HAS_NEWLIB == 1
-    toolchain_exclude: xcc
-    platform_exclude: qemu_x86 qemu_leon3 qemu_malta qemu_malta_be
-    arch_exclude: arc xtensa
     tags: newlib
 #  thrift.hello.native:
 #    arch_allow: posix
 #    tags: native
-  thrift.hello.arcmwdtlib:
-    toolchain_allow: arcmwdt
-    platform_allow: nsim_hs nsim_em
-    tags: arc
-    extra_configs:
-      - CONFIG_ARCMWDT_LIBC=y
