@@ -7,8 +7,7 @@ common:
   arch_exclude: arc xtensa
   integration_platforms:
     - mps2_an385
-    - qemu_x86_64
-    - qemu_cortex_a53_smp
+    - qemu_cortex_a53
 tests:
   thrift.hello.newlib:
     tags: newlib
