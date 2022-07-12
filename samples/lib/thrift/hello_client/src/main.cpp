@@ -25,7 +25,7 @@ using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 
 #ifdef __ZEPHYR__
-void main(void)
+int main(void)
 #else
 int main(int argc, char** argv)
 #endif
@@ -59,12 +59,8 @@ int main(int argc, char** argv)
     transport->close();
   } catch (std::exception& e) {
     printf("caught exception: %s\n", e.what());
-#ifndef __ZEPHYR__
     return EXIT_FAILURE;
-#endif
   }
 
-#ifndef __ZEPHYR__
   return EXIT_SUCCESS;
-#endif
 }
