@@ -51,7 +51,7 @@ jobs:
         shell: bash
         run: |
           source zephyr-env.sh
-          twister -i --build-only -W -T samples/
+          twister -i --build-only -G -T samples/
 
       - name: Build Samples (POSIX)
         working-directory: thrift-for-zephyr
