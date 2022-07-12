@@ -25,7 +25,7 @@ using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
 
 #ifdef __ZEPHYR__
-void main(void)
+int main(void)
 #else
 int main(int argc, char** argv)
 #endif
@@ -55,12 +55,8 @@ int main(int argc, char** argv)
     server.serve();
   } catch (std::exception& e) {
     printf("caught exception: %s\n", e.what());
-#ifndef __ZEPHYR__
     return EXIT_FAILURE;
-#endif
   }
 
-#ifndef __ZEPHYR__
   return EXIT_SUCCESS;
-#endif
 }
