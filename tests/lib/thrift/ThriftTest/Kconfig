@@ -10,3 +10,10 @@ config THRIFTTEST_SERVER_STACK_SIZE
 config THRIFTTEST_LOG_LEVEL
   int "ThriftTest log level"
   default 4
+
+config THRIFT_COMPACT_PROTOCOL
+  bool "Enable tests for TCompactProtocol"
+  depends on THRIFT
+  default y
+  help
+    Enable this option to include TCompactProtocol in tests

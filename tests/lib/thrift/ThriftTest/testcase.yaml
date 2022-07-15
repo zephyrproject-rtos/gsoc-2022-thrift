@@ -9,7 +9,11 @@ common:
     - mps2_an385
     - qemu_cortex_a53
 tests:
-  thrift.hello.newlib:
+  thrift.ThriftTest.newlib.binaryProtocol:
+    tags: newlib
+  thrift.ThriftTest.newlib.compactProtocol:
+    extra_configs:
+      - CONFIG_THRIFT_COMPACT_PROTOCOL=y
     tags: newlib
 #  thrift.hello.native:
 #    arch_allow: posix
