@@ -13,6 +13,21 @@ config THRIFT
   depends on (ARCH_POSIX && !EVENTFD) || (!ARCH_POSIX && EVENTFD)
   help
     Enable this option to support Apache Thrift
+
+config THRIFT_ZLIB
+  bool "Enable Zlib support for Thrift"
+  depends on THRIFT
+  select MUZIC
+  help
+    Enable this option to include the zlib implementation for Thrift
+
+config THRIFT_ZLIB_TRANSPORT
+  bool "Enable TZlibTransport support for Thrift"
+  depends on THRIFT
+  select THRIFT_ZLIB
+  help
+    Enable this option to support TZlibTransport for Thrift
+
 endmenu
 
 module = THRIFT
