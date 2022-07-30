@@ -1,3 +1,9 @@
+/*
+ * Copyright 2020 Martin Rizzo
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 /**
  * @file       inflater.h
  * @date       Jun 2, 2020

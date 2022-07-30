@@ -1,4 +1,10 @@
 /*
+ * Copyright 2003 Joergen Ibsen / Jibz
+ *
+ * SPDX-License-Identifier: Zlib
+ */
+
+/*
  * uzlib  -  tiny deflate/inflate library (deflate, gzip, zlib)
  *
  * Copyright (c) 2003 by Joergen Ibsen / Jibz

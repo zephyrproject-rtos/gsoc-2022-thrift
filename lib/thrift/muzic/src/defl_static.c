@@ -1,4 +1,10 @@
 /*
+ * Copyright 2014 Simon Tatham
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
 
 Routines in this file are based on:
 Zlib (RFC1950 / RFC1951) compression for PuTTY.

@@ -1,4 +1,10 @@
 /*
+ * Copyright 2022 uzlib authors
+ *
+ * SPDX-License-Identifier: Zlib
+ */
+
+/*
  * Copyright (c) uzlib authors
  *
  * This software is provided 'as-is', without any express

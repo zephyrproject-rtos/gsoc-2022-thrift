@@ -1,4 +1,10 @@
 /*
+ * Copyright 2014 Paul Sokolovsky
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
  * genlz77  -  Generic LZ77 compressor
  *
  * Copyright (c) 2014 by Paul Sokolovsky
