@@ -1,0 +1,14 @@
+common:
+  tags: muzic
+  # FIXME: zephyrproject-rtos/zephyr#45100
+  arch_exclude: posix
+  filter: TOOLCHAIN_HAS_NEWLIB == 1
+  toolchain_exclude: xcc
+  arch_exclude: arc xtensa
+  integration_platforms:
+    - mps2_an385
+    - qemu_cortex_a53
+tests:
+  muzic.newlib:
+    tags: newlib
+
