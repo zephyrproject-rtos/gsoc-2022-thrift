@@ -11,7 +11,6 @@ target_compile_definitions(app PUBLIC _GLIBCXX_HAS_GTHREADS=1)
 
 zephyr_library()
 zephyr_include_directories(include)
-zephyr_include_directories(muzic/include)
 zephyr_include_directories(${THRIFT_UPSTREAM}/lib/cpp/src)
 
 zephyr_library_sources(
@@ -32,13 +31,10 @@ zephyr_library_sources(
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/TOutput.cpp
 )
 
-zephyr_library_sources_ifdef(CONFIG_THRIFT_ZLIB
-  muzic/src/defl_static.c
-  muzic/src/genlz77.c
-  muzic/src/inflater.c
-  muzic/src/zlib_comp.c
-)
-
 zephyr_library_sources_ifdef(CONFIG_THRIFT_ZLIB_TRANSPORT
+  src/defl_static.c
+  src/genlz77.c
+  src/inflater.c
+  src/zlib_comp.c
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TZlibTransport.cpp
 )

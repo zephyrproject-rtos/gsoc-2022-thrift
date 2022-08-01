@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "uzlib.h"
+#include "muzic/uzlib.h"
 #include "zlib.h"
 
 /**

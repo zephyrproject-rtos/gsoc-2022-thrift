@@ -14,13 +14,6 @@ config THRIFT
   help
     Enable this option to support Apache Thrift
 
-config THRIFT_ZLIB
-  bool "Enable Zlib support for Thrift"
-  depends on THRIFT
-  select MUZIC
-  help
-    Enable this option to include the zlib implementation for Thrift
-
 config THRIFT_ZLIB_TRANSPORT
   bool "Enable TZlibTransport support for Thrift"
   depends on THRIFT

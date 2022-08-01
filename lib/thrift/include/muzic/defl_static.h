@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: Zlib */
 /*
- * Copyright (c) uzlib authors
+ * Copyright (c) 2014 uzlib authors
  *
  * This software is provided 'as-is', without any express
  * or implied warranty.  In no event will the authors be
