@@ -1,11 +1,14 @@
 /*
  * Copyright 2022 Young Mei
  *
- * SPDX-License-Identifier: Zlib
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 #ifndef MZ_CONF_INCLUDED
 #define MZ_CONF_INCLUDED
+
+/* Optimize for code size in the first place */
+#define MZ_OPTIMIZE_SIZE
 
 /* Don't insert empty block in the middle of a stream given empty inputs */
 #define MZ_NO_EMPTY_BLOCK
@@ -32,6 +35,5 @@
    too much overhead for short strings of just a few bytes). */
 #define UZLIB_CONF_USE_MEMCPY 0
 #endif
-
 
 #endif /* MZ_CONF_INCLUDED */

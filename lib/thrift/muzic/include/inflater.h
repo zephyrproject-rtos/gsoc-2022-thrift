@@ -37,33 +37,33 @@
 #include "mz_config.h"
 #include "zlib.h"
 
-#undef  Byte
-#define Byte  unsigned char
+#undef Byte
+#define Byte unsigned char
 
 typedef enum InfError {
-    InfError_BadBlockContent = -8,     /**< The content of block is invalid */
-    InfError_BadBlockLength = -7,      /**< The length of block is invalid  */
-    InfError_BadBlockType = -6,        /**< The type of block is invalid    */
-    InfError_UnsupportedZLibHeader = -5,
-    InfError_BadZLibHeader = -4,
-    InfError_BadParameter = -3,
-    InfError_Adler32Mismatch = -2,
-    InfError_Failed = -1,
-    InfError_None = 0
+  InfError_BadBlockContent = -8, /**< The content of block is invalid */
+  InfError_BadBlockLength = -7,  /**< The length of block is invalid  */
+  InfError_BadBlockType = -6,    /**< The type of block is invalid    */
+  InfError_UnsupportedZLibHeader = -5,
+  InfError_BadZLibHeader = -4,
+  InfError_BadParameter = -3,
+  InfError_Adler32Mismatch = -2,
+  InfError_Failed = -1,
+  InfError_None = 0
 } InfError;
 
 typedef enum InfAction {
-    InfAction_Finish                 = 0,
-    InfAction_FillInputBuffer        = 1,
-    InfAction_UseOutputBufferContent = 2,
-    InfAction_Feed2ndZlibHeaderByte  = 3,
-    InfAction_ProcessNextChunk       = 256,
-    InfAction_Init                   = 1024
+  InfAction_Finish = 0,
+  InfAction_FillInputBuffer = 1,
+  InfAction_UseOutputBufferContent = 2,
+  InfAction_Feed2ndZlibHeaderByte = 3,
+  InfAction_ProcessNextChunk = 256,
+  InfAction_Init = 1024
 } InfAction;
 
 typedef struct InfData {
-    const void* buffer;
-    size_t      bufferSize;
+  const void* buffer;
+  size_t bufferSize;
 } InfData;
 
 #endif /* ifndef INFLATER_H_INCLUDED */
