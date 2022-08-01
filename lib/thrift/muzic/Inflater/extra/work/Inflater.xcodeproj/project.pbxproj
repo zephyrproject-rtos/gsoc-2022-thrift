@@ -1,0 +1,557 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5B1A70A124A2759A002C19FA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A70A024A2759A002C19FA /* main.cpp */; };
+		5B1A70A424A275A8002C19FA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A70A324A275A8002C19FA /* main.c */; };
+		5B1A70A724A275BE002C19FA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A70A624A275BE002C19FA /* main.c */; };
+		5B1A70AA24A275CF002C19FA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A70A924A275CF002C19FA /* main.c */; };
+		5B1A70AD24A275EB002C19FA /* inflater.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A70AB24A275EB002C19FA /* inflater.c */; };
+		5B1A70AE24A275FE002C19FA /* inflater.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A70AB24A275EB002C19FA /* inflater.c */; };
+		5B1A70AF24A275FF002C19FA /* inflater.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A70AB24A275EB002C19FA /* inflater.c */; };
+		5B1A70B024A27600002C19FA /* inflater.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A70AB24A275EB002C19FA /* inflater.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5B1A706824A27443002C19FA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5B1A707324A27456002C19FA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5B1A707E24A27465002C19FA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5B1A708924A27471002C19FA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5B1A706A24A27443002C19FA /* uzo-cpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "uzo-cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B1A707524A27456002C19FA /* uzo-feed */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "uzo-feed"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B1A708024A27465002C19FA /* uzo-proc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "uzo-proc"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B1A708B24A27471002C19FA /* uzo-take */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "uzo-take"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B1A70A024A2759A002C19FA /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		5B1A70A324A275A8002C19FA /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		5B1A70A624A275BE002C19FA /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		5B1A70A924A275CF002C19FA /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		5B1A70AB24A275EB002C19FA /* inflater.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inflater.c; path = ../../inflater.c; sourceTree = "<group>"; };
+		5B1A70AC24A275EB002C19FA /* inflater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inflater.h; path = ../../inflater.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5B1A706724A27443002C19FA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B1A707224A27456002C19FA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B1A707D24A27465002C19FA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B1A708824A27471002C19FA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5B1A709F24A2759A002C19FA /* uzo-cpp */ = {
+			isa = PBXGroup;
+			children = (
+				5B1A70A024A2759A002C19FA /* main.cpp */,
+			);
+			name = "uzo-cpp";
+			path = "../examples/uzo-cpp";
+			sourceTree = "<group>";
+		};
+		5B1A70A224A275A8002C19FA /* uzo-feed */ = {
+			isa = PBXGroup;
+			children = (
+				5B1A70A324A275A8002C19FA /* main.c */,
+			);
+			name = "uzo-feed";
+			path = "../examples/uzo-feed";
+			sourceTree = "<group>";
+		};
+		5B1A70A524A275BE002C19FA /* uzo-proc */ = {
+			isa = PBXGroup;
+			children = (
+				5B1A70A624A275BE002C19FA /* main.c */,
+			);
+			name = "uzo-proc";
+			path = "../examples/uzo-proc";
+			sourceTree = "<group>";
+		};
+		5B1A70A824A275CF002C19FA /* uzo-take */ = {
+			isa = PBXGroup;
+			children = (
+				5B1A70A924A275CF002C19FA /* main.c */,
+			);
+			name = "uzo-take";
+			path = "../examples/uzo-take";
+			sourceTree = "<group>";
+		};
+		5BE980EA24A271AE00D59F24 = {
+			isa = PBXGroup;
+			children = (
+				5B1A70AC24A275EB002C19FA /* inflater.h */,
+				5B1A70AB24A275EB002C19FA /* inflater.c */,
+				5B1A709F24A2759A002C19FA /* uzo-cpp */,
+				5B1A70A224A275A8002C19FA /* uzo-feed */,
+				5B1A70A524A275BE002C19FA /* uzo-proc */,
+				5B1A70A824A275CF002C19FA /* uzo-take */,
+				5BE980F424A271AE00D59F24 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5BE980F424A271AE00D59F24 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5B1A706A24A27443002C19FA /* uzo-cpp */,
+				5B1A707524A27456002C19FA /* uzo-feed */,
+				5B1A708024A27465002C19FA /* uzo-proc */,
+				5B1A708B24A27471002C19FA /* uzo-take */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5B1A706924A27443002C19FA /* uzo-cpp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B1A707024A27444002C19FA /* Build configuration list for PBXNativeTarget "uzo-cpp" */;
+			buildPhases = (
+				5B1A706624A27443002C19FA /* Sources */,
+				5B1A706724A27443002C19FA /* Frameworks */,
+				5B1A706824A27443002C19FA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "uzo-cpp";
+			productName = "uzo-cpp";
+			productReference = 5B1A706A24A27443002C19FA /* uzo-cpp */;
+			productType = "com.apple.product-type.tool";
+		};
+		5B1A707424A27456002C19FA /* uzo-feed */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B1A707924A27456002C19FA /* Build configuration list for PBXNativeTarget "uzo-feed" */;
+			buildPhases = (
+				5B1A707124A27456002C19FA /* Sources */,
+				5B1A707224A27456002C19FA /* Frameworks */,
+				5B1A707324A27456002C19FA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "uzo-feed";
+			productName = "uzo-feed";
+			productReference = 5B1A707524A27456002C19FA /* uzo-feed */;
+			productType = "com.apple.product-type.tool";
+		};
+		5B1A707F24A27465002C19FA /* uzo-proc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B1A708424A27465002C19FA /* Build configuration list for PBXNativeTarget "uzo-proc" */;
+			buildPhases = (
+				5B1A707C24A27465002C19FA /* Sources */,
+				5B1A707D24A27465002C19FA /* Frameworks */,
+				5B1A707E24A27465002C19FA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "uzo-proc";
+			productName = "uzo-proc";
+			productReference = 5B1A708024A27465002C19FA /* uzo-proc */;
+			productType = "com.apple.product-type.tool";
+		};
+		5B1A708A24A27471002C19FA /* uzo-take */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B1A708F24A27471002C19FA /* Build configuration list for PBXNativeTarget "uzo-take" */;
+			buildPhases = (
+				5B1A708724A27471002C19FA /* Sources */,
+				5B1A708824A27471002C19FA /* Frameworks */,
+				5B1A708924A27471002C19FA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "uzo-take";
+			productName = "uzo-take";
+			productReference = 5B1A708B24A27471002C19FA /* uzo-take */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5BE980EB24A271AE00D59F24 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1150;
+				ORGANIZATIONNAME = "Martin Rizzo";
+				TargetAttributes = {
+					5B1A706924A27443002C19FA = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					5B1A707424A27456002C19FA = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					5B1A707F24A27465002C19FA = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					5B1A708A24A27471002C19FA = {
+						CreatedOnToolsVersion = 11.5;
+					};
+				};
+			};
+			buildConfigurationList = 5BE980EE24A271AE00D59F24 /* Build configuration list for PBXProject "Inflater" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5BE980EA24A271AE00D59F24;
+			productRefGroup = 5BE980F424A271AE00D59F24 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5B1A706924A27443002C19FA /* uzo-cpp */,
+				5B1A707424A27456002C19FA /* uzo-feed */,
+				5B1A707F24A27465002C19FA /* uzo-proc */,
+				5B1A708A24A27471002C19FA /* uzo-take */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5B1A706624A27443002C19FA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B1A70B024A27600002C19FA /* inflater.c in Sources */,
+				5B1A70A124A2759A002C19FA /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B1A707124A27456002C19FA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B1A70AF24A275FF002C19FA /* inflater.c in Sources */,
+				5B1A70A424A275A8002C19FA /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B1A707C24A27465002C19FA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B1A70AE24A275FE002C19FA /* inflater.c in Sources */,
+				5B1A70A724A275BE002C19FA /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B1A708724A27471002C19FA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B1A70AD24A275EB002C19FA /* inflater.c in Sources */,
+				5B1A70AA24A275CF002C19FA /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5B1A706E24A27444002C19FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B1A706F24A27444002C19FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5B1A707A24A27456002C19FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B1A707B24A27456002C19FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5B1A708524A27465002C19FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B1A708624A27465002C19FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5B1A709024A27471002C19FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B1A709124A27471002C19FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5BE980F824A271AE00D59F24 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_CW_ASM_SYNTAX = NO;
+				GCC_C_LANGUAGE_STANDARD = ansi;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_ASM_KEYWORD = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5BE980F924A271AE00D59F24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_CW_ASM_SYNTAX = NO;
+				GCC_C_LANGUAGE_STANDARD = ansi;
+				GCC_ENABLE_ASM_KEYWORD = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_LINK_WITH_DYNAMIC_LIBRARIES = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5B1A707024A27444002C19FA /* Build configuration list for PBXNativeTarget "uzo-cpp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B1A706E24A27444002C19FA /* Debug */,
+				5B1A706F24A27444002C19FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B1A707924A27456002C19FA /* Build configuration list for PBXNativeTarget "uzo-feed" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B1A707A24A27456002C19FA /* Debug */,
+				5B1A707B24A27456002C19FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B1A708424A27465002C19FA /* Build configuration list for PBXNativeTarget "uzo-proc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B1A708524A27465002C19FA /* Debug */,
+				5B1A708624A27465002C19FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B1A708F24A27471002C19FA /* Build configuration list for PBXNativeTarget "uzo-take" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B1A709024A27471002C19FA /* Debug */,
+				5B1A709124A27471002C19FA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BE980EE24A271AE00D59F24 /* Build configuration list for PBXProject "Inflater" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BE980F824A271AE00D59F24 /* Debug */,
+				5BE980F924A271AE00D59F24 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5BE980EB24A271AE00D59F24 /* Project object */;
+}

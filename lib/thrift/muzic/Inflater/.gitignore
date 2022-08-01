@@ -1,0 +1,6 @@
+xcuserdata/
+.DS_Store
+
+# in test folder: ignore all files except zip files
+/extra/test/*.*
+!/extra/test/*.zip
