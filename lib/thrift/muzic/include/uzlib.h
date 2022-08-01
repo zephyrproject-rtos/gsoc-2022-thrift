@@ -44,7 +44,7 @@
 extern "C" {
 #endif
 
-#include "uzlib_conf.h"
+#include "mz_config.h"
 #if UZLIB_CONF_DEBUG_LOG
 #include <stdio.h>
 #endif
@@ -81,7 +81,7 @@ typedef struct {
    unsigned short trans[288]; /* code -> symbol translation table */
 } TINF_TREE;
 
-struct uzlib_uncomp {
+typedef struct uzlib_uncomp_s {
     /* Pointer to the next byte in the input buffer */
     const unsigned char *source;
     /* Pointer to the next byte past the input buffer (source_limit = source + len) */
@@ -91,7 +91,7 @@ struct uzlib_uncomp {
        also return -1 in case of EOF (or irrecoverable error). Note that
        besides returning the next byte, it may also update source and
        source_limit fields, thus allowing for buffered operation. */
-    int (*source_read_cb)(struct uzlib_uncomp *uncomp);
+    int (*source_read_cb)(struct uzlib_uncomp_s *uncomp);
 
     unsigned int tag;
     unsigned int bitcount;
@@ -118,9 +118,8 @@ struct uzlib_uncomp {
 
     TINF_TREE ltree; /* dynamic length/symbol tree */
     TINF_TREE dtree; /* dynamic distance tree */
-};
+} uzlib_uncomp;
 
-#include "tinf_compat.h"
 
 #define TINF_PUT(d, c) \
     { \
@@ -128,17 +127,17 @@ struct uzlib_uncomp {
         if (d->dict_ring) { d->dict_ring[d->dict_idx++] = c; if (d->dict_idx == d->dict_size) d->dict_idx = 0; } \
     }
 
-unsigned char TINFCC uzlib_get_byte(TINF_DATA *d);
+unsigned char TINFCC uzlib_get_byte(uzlib_uncomp *d);
 
 /* Decompression API */
 
 void TINFCC uzlib_init(void);
-void TINFCC uzlib_uncompress_init(TINF_DATA *d, void *dict, unsigned int dictLen);
-int  TINFCC uzlib_uncompress(TINF_DATA *d);
-int  TINFCC uzlib_uncompress_chksum(TINF_DATA *d);
+void TINFCC uzlib_uncompress_init(uzlib_uncomp *d, void *dict, unsigned int dictLen);
+int  TINFCC uzlib_uncompress(uzlib_uncomp *d);
+int  TINFCC uzlib_uncompress_chksum(uzlib_uncomp *d);
 
-int TINFCC uzlib_zlib_parse_header(TINF_DATA *d);
-int TINFCC uzlib_gzip_parse_header(TINF_DATA *d);
+int TINFCC uzlib_zlib_parse_header(uzlib_uncomp *d);
+int TINFCC uzlib_gzip_parse_header(uzlib_uncomp *d);
 
 /* Compression API */
 
