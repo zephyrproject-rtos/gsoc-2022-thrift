@@ -30,7 +30,7 @@
  *  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * -------------------------------------------------------------------------
  */
-#include "inflater.h"
+#include "muzic/inflater.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

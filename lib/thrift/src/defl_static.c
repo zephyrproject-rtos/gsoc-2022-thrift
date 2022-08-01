@@ -31,9 +31,9 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "uzlib.h"
+#include "muzic/uzlib.h"
 
-#include "defl_static.h"
+#include "muzic/defl_static.h"
 
 #include <assert.h>
 #include <stdint.h>
