@@ -15,6 +15,13 @@ tests:
     extra_configs:
       - CONFIG_THRIFT_COMPACT_PROTOCOL=y
     tags: newlib
+  thrift.ThriftTest.newlib.bufferedTransport:
+    tags: newlib
+  thrift.ThriftTest.newlib.zlibTransport:
+    extra_configs:
+      - CONFIG_THRIFT_ZLIB_TRANSPORT=y
+      - CONFIG_NEWLIB_LIBC_MAX_MAPPED_REGION_SIZE=4194304
+    tags: newlib
 #  thrift.hello.native:
 #    arch_allow: posix
 #    tags: native

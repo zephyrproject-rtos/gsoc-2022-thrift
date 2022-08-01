@@ -14,6 +14,7 @@
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/transport/TFDTransport.h>
 #include <thrift/transport/TServerSocket.h>
+#include <thrift/transport/TZlibTransport.h>
 
 #include "context.hpp"
 #include "server.hpp"
@@ -58,6 +59,11 @@ static void* server_func(void* arg) {
 static std::unique_ptr<ThriftTestClient> setup_client() {
   std::shared_ptr<TTransport> trans(new TFDTransport(context.fds[ctx::CLIENT]));
   std::shared_ptr<TTransport> transport(new TBufferedTransport(trans));
+  if (IS_ENABLED(CONFIG_THRIFT_ZLIB_TRANSPORT)) {
+    transport = std::make_shared<TZlibTransport>(trans);
+  } else {
+    transport = std::make_shared<TBufferedTransport>(trans);
+  }
   std::shared_ptr<TProtocol> protocol;
   if (IS_ENABLED(CONFIG_THRIFT_COMPACT_PROTOCOL)) {
     protocol = std::make_shared<TCompactProtocol>(transport);
@@ -72,7 +78,12 @@ static std::unique_ptr<TServer> setup_server() {
   std::shared_ptr<TestHandler> handler(new TestHandler());
   std::shared_ptr<TProcessor> processor(new ThriftTestProcessor(handler));
   std::shared_ptr<TServerTransport> serverTransport(new TFDServer(context.fds[ctx::SERVER]));
-  std::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+  std::shared_ptr<TTransportFactory> transportFactory;
+  if (IS_ENABLED(CONFIG_THRIFT_ZLIB_TRANSPORT)) {
+    transportFactory = std::make_shared<TZlibTransportFactory>();
+  } else {
+    transportFactory = std::make_shared<TBufferedTransportFactory>();
+  }
   std::shared_ptr<TProtocolFactory> protocolFactory;
   if (IS_ENABLED(CONFIG_THRIFT_COMPACT_PROTOCOL)) {
     protocolFactory = std::make_shared<TCompactProtocolFactory>();
