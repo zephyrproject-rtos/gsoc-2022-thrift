@@ -37,15 +37,10 @@
 #include <stdio.h>
 
 /*====================================================================================================================*/
-#pragma mark  -  CONSTANTS AND MACROS
 
 static size_t min(size_t a, size_t b) { return a<b ? a : b; }
 
 /** Macro to access to the full internal state */
-#define inf (*(Inf_State*)infptr)
-
-#define InfMinBufferSize    (32*1024)
-#define InfHelperBufferSize (64*1024)
 
 #define Inf_EndOfBlock           256
 #define Inf_MaxValidLengthCode   285
@@ -64,27 +59,13 @@ static size_t min(size_t a, size_t b) { return a<b ? a : b; }
 
 
 /* Macros used for control flow inside the 'inflateProcessChunk(..) function */
-#define inf__FILL_INPUT_BUFFER()                             inf.pub.action=InfAction_FillInputBuffer;            break;
-#define inf__USE_OUTPUT_BUFFER_CONTENT()                     inf.pub.action=InfAction_UseOutputBufferContent;     break;
-#define inf__FINISH()               step=InfStep_END;        inf.pub.action=InfAction_Finish;                     break;
-#define inf__ERROR(err)             step=InfStep_FATAL_ERROR;inf.pub.action=InfAction_Finish; inf.pub.error=err;  break;
-#define inf__goto(dest_step)        step=dest_step;                                                               break;
-#define inf__fallthrough(next_step) step=next_step;
-
-
-
-
-typedef enum InfMode {
-    InfMode_Uninitialized,
-    InfMode_Take,
-    InfMode_Feed
-} InflaterMode;
-
-typedef enum InfFlags {
-    InfFlags_FreeOutputBuffer,
-    InfFlags_FreeInputBuffer,
-    InfFlags_FreeItself
-} InfFlags;
+#define inf__FILL_INPUT_BUFFER()            st->action = InfAction_FillInputBuffer;         \
+                                            res = Z_OK; break;
+#define inf__USE_OUTPUT_BUFFER_CONTENT()    st->action = InfAction_UseOutputBufferContent;  \
+                                            res = Z_OK; break;                              \
+                                             
+#define inf__goto(dest_step)                step=dest_step; break;
+#define inf__fallthrough(next_step)         step=next_step;
 
 typedef enum InfStep {
     InfStep_START, InfStep_PROCESS_NEXT_BLOCK, InfStep_READ_BLOCK_HEADER,
@@ -99,7 +80,7 @@ typedef enum InfStep {
     InfStep_Read_Distance,
     InfStep_Read_DistanceBits,
     
-    InfStep_OUTPUT_SEQUENCE, InfStep_FATAL_ERROR, InfStep_END
+    InfStep_OUTPUT_SEQUENCE, InfStep_FATAL_ERROR, InfStep_ADLER32_CHECKSUM, InfStep_END
 } InfStep;
 
 static const unsigned char Inf_Reverse[256] = {
@@ -137,7 +118,7 @@ typedef union Inf_Huff {
     unsigned raw;
 } Inf_Huff;
 
-#define Inf_HuffConst(code_,length_) { length_, 1, code_ }
+#define Inf_HuffConst(code_,length_) {{ length_, 1, code_ }}
 #define Inf_Huff_SetValue(s, huff, hufflen, byte) s.value.code=byte; s.value.isvalid=1; s.value.length=hufflen
 #define Inf_Huff_SetTableRef(s, index_,mask_) (s.subtable.index=(index_), s.subtable.error=0, s.subtable.mask=(mask_), s)
 #define Inf_Huff_Decode(table, tmp, bitbuffer) \
@@ -145,7 +126,6 @@ typedef union Inf_Huff {
 
 
 /*====================================================================================================================*/
-#pragma mark  -  READING DATA FROM THE BITSTREAM
 
 /** The bitstream */
 typedef struct Inf_BS {
@@ -223,7 +203,6 @@ static InfBool Inf_BS_ReadBytes(Inf_BS* bitstream, unsigned char* dest, size_t* 
 
 
 /*====================================================================================================================*/
-#pragma mark  -  LOADING THE SYMBOL/LENGTH LIST
 
 /** The symbol-length list reader */
 typedef struct Inf_SLList {
@@ -365,7 +344,6 @@ static const InfSymlen* Inf_SLList_GetSorted(Inf_SLList* list, InfBool resetRepe
 
 
 /*====================================================================================================================*/
-#pragma mark  -  CREATING HUFFMAN TABLE DECODERS
 
 #define Inf_Huff_NextCanonical(huffman, currentLength, newLength) \
     huffman       = (huffman+1) << (newLength - currentLength);   \
@@ -473,18 +451,91 @@ static const Inf_Huff* Inf_Huff_MakeFixedDistanceDecoder(Inf_SLList* tmplist) {
     return (cachedDecoder = Inf_Huff_MakeDecoder(table, Inf_SLList_GetSorted(tmplist, Inf_TRUE)));
 }
 
+/*====================================================================================================================*/
+/* TODO: implement scalable seqence_buf                                 */
+/* TODO: use scaling buffer size to implement stronger check on distance*/
+
+enum {Inf_Outbuf_size = 1024 * 32};
+
+typedef struct Inf_Outbuf {
+    unsigned char* seqence_buf;
+    unsigned char* seqence_ptr;
+    unsigned char* seqence_end;
+} Inf_Outbuf;
+
+static int Inf_Outbuf_init(Inf_Outbuf* infbuf){
+    infbuf->seqence_buf = (unsigned char*)malloc(Inf_Outbuf_size*sizeof(unsigned char));
+    infbuf->seqence_ptr = infbuf->seqence_buf;
+    infbuf->seqence_end = infbuf->seqence_buf + Inf_Outbuf_size;
+    return infbuf->seqence_buf != NULL;
+}
+
+static void Inf_Outbuf_putc(Inf_Outbuf* infbuf, const char c){
+    assert(infbuf->seqence_ptr <= infbuf->seqence_end);
+    if(infbuf->seqence_ptr == infbuf->seqence_end) { infbuf->seqence_ptr = infbuf->seqence_buf; }
+    *(infbuf->seqence_ptr++) = c;
+}
+
+static void Inf_Outbuf_write(Inf_Outbuf* infbuf, const char* buf, unsigned int len){
+    unsigned int restBytes = infbuf->seqence_end - infbuf->seqence_ptr;
+    while (len > restBytes){
+        memcpy( infbuf->seqence_ptr, buf, restBytes );
+        buf += restBytes;
+        len -= restBytes;
+        infbuf->seqence_ptr = infbuf->seqence_buf;
+        restBytes = Inf_Outbuf_size;
+    }
+
+    memcpy( infbuf->seqence_ptr, buf, len );
+    infbuf->seqence_ptr += len;
+}
+
+static int Inf_Outbuf_read(
+    Inf_Outbuf*  infbuf, 
+    char*        dest, 
+    unsigned int distance, 
+    unsigned int len
+){
+    unsigned char* sequencePtr = infbuf->seqence_ptr - distance;
+    if (sequencePtr < infbuf->seqence_buf) {
+        sequencePtr += Inf_Outbuf_size;
+        unsigned int restBytes = infbuf->seqence_end - sequencePtr;
+        if(restBytes >= len){
+            memcpy( dest, sequencePtr, len );
+            Inf_Outbuf_write(infbuf, sequencePtr, len);
+            return 1;
+        }else{
+            memcpy( dest, sequencePtr, restBytes );
+            Inf_Outbuf_write(infbuf, sequencePtr, restBytes);
+            sequencePtr = infbuf->seqence_buf;
+            len  -= restBytes;
+            dest += restBytes;
+            if (sequencePtr + len > infbuf->seqence_ptr) return 0;
+        }
+    }
+
+    while (len-- > 0) { 
+        Inf_Outbuf_putc(infbuf, *sequencePtr); 
+        *(dest++) = *(sequencePtr++);
+    }
+
+    return 1;
+}
+
+static void Inf_Outbuf_Destroy(Inf_Outbuf* infbuf){
+    free(infbuf->seqence_buf);
+    infbuf->seqence_buf = NULL;
+}
 
 /*====================================================================================================================*/
-#pragma mark  -  IMPLEMENTATION OF PUBLIC FUNCTIONS
 
 /** The current state of the inflate process (all this info is hidden behind the `Inflater` pointer) */
 typedef struct Inf_State {
-    
-    Inflater   pub;       /**< The public data exposed in the `Inflater` pointer */
     Inf_BS     bitstream; /**< The bitbuffer                                     */
     Inf_SLList sllist;    /**< The symbol-length list                            */
     
     /* Data used directly by the inflate process */
+    InfAction       action;
     InfStep         step;            /**< The current step in the inflate process, ex: InfStep_ReadBlockHeader */
     unsigned        isLastBlock;     /**< TRUE (1) when processing the last block of the data set              */
     unsigned        symcount;        /**< The number of symbols used in front,literal & distance decoders      */
@@ -496,77 +547,43 @@ typedef struct Inf_State {
     const Inf_Huff* distanceDecoder; /**< The distance huffman decoder                                         */
     Inf_Huff        huffmanTableA[Inf_HuffTableSize]; /**< pri. buffer where huffman tables used by decoders are stored */
     Inf_Huff        huffmanTableB[Inf_HuffTableSize]; /**< sec. buffer where huffman tables used by decoders are stored */
+    Inf_Outbuf      outputBuf;
 
 } Inf_State;
 
-Inflater* inflaterCreate(void* workingBuffer, size_t workingBufferSize) {
-    unsigned length;
-    Inf_State* infptr = (Inf_State*)malloc(sizeof(Inf_State));
-    
-    inf.pub.mode            = InfMode_Uninitialized;
-    inf.pub.flags           = InfFlags_FreeItself;
-    inf.pub.action          = InfAction_Init;
-    inf.pub.error           = InfError_None;
-    
-    inf.pub.userPtr          = NULL;
-    inf.pub.dataProviderFunc = NULL;
-    inf.pub.dataReceiverFunc = NULL;
-    
-    inf.pub.inputChunkPtr   = NULL;
-    inf.pub.inputChunkEnd   = NULL;
-    inf.pub.outputChunk     = NULL;
-    inf.pub.outputChunkSize = 0;
-    inf.pub.outputBufferContentSize = 0;
-    
-    /*---- inflaterTake / inflaterFeed ----------- */
-    inf.pub.helperOutput.buffer     = NULL;
-    inf.pub.helperOutput.bufferSize = 0;
-    inf.pub.helperInput.buffer      = NULL;
-    inf.pub.helperInput.bufferSize  = 0;
-    inf.pub.takeOutputPtr           = NULL;
-    inf.pub.takeOutputRemaining     = 0;
-    inf.pub.providedData.buffer     = NULL;
-    inf.pub.providedData.bufferSize = 0;
-    
+int inflateInit(z_stream* strm) {
+    Inf_State* st = (Inf_State*)malloc(sizeof(Inf_State));
+    if (st == Z_NULL) return Z_MEM_ERROR;
+    if (strm == Z_NULL) return Z_STREAM_ERROR;
+    strm->msg = Z_NULL;                 /* in case we return an error */
+
+    strm->total_in  = 0;
+    strm->total_out = 0;
+
+    st->action = InfAction_Init;
     /*---- decompress ---------------------------- */
-    inf.step        = 0;
-    inf.bitstream.bits = 0;
-    inf.bitstream.size = 0;
+    st->step           = 0;
+    st->bitstream.bits = 0;
+    st->bitstream.size = 0;
     
     /*---- symlen list --------------------------- */
-    inf.sllist.command          = 0;
-    inf.sllist.huffmanLength    = 0;
-    inf.sllist.repetitions      = 0;
-    inf.sllist.symbol           = 0;
-    inf.sllist.elementIndex = 0;
+    st->sllist.command          = 0;
+    st->sllist.huffmanLength    = 0;
+    st->sllist.repetitions      = 0;
+    st->sllist.symbol           = 0;
+    st->sllist.elementIndex = 0;
+    
+    unsigned length;
     for (length=0; length<=Inf_LastValidLength; ++length) {
-        inf.sllist.headPtr[length] = inf.sllist.tailPtr[length] = NULL;
+        st->sllist.headPtr[length] = st->sllist.tailPtr[length] = NULL;
     }
 
-    
-    if (workingBuffer!=NULL && workingBufferSize>=InfHelperBufferSize) {
-        inf.pub.helperOutput.buffer     = workingBuffer;
-        inf.pub.helperOutput.bufferSize = workingBufferSize;
-    }
-    assert( (Inflater*)infptr == &inf.pub );
-    return (Inflater*)infptr;
+    if (!Inf_Outbuf_init(&(st->outputBuf))) return Z_MEM_ERROR;
+    strm->state.infl_state = st;
+    return Z_OK;
 }
 
-/**
- * Decompresses a chunk of compressed data
- * @param infptr            Pointer to the `Inflater` object created with `inflaterCreate(..)`
- * @param outputBuffer      Pointer to the destination buffer where decompressed data will be stored
- * @param outputBufferSize  The available capacity of `destBuffer` in number of bytes
- * @param inputBuffer       Pointer to the source buffer from where compressed data is read
- * @param inputBufferSize   The length of `sourBuffer` in number of bytes
- * @returns
- *     The action required to execute to continue with the next chunk, ex: `InfAction_FillInputBuffer`
- */
-InfAction inflaterProcessChunk(Inflater*         infptr,
-                               void* const       outputBuffer,
-                               size_t            outputBufferSize,
-                               const void* const inputBuffer,
-                               size_t            inputBufferSize)
+int inflate(z_stream* strm, int flush)
 {
     static const unsigned int lengthStarts[] = {
          3,  4,  5,  6,  7,  8,  9,  10,  11,  13,  15,  17,  19,  23,  27,  31,
@@ -587,62 +604,106 @@ InfAction inflaterProcessChunk(Inflater*         infptr,
          BlockType_FixedHuffman   = 1,
          BlockType_DynamicHuffman = 2
     };
-    InfBool canReadAll; InfStep step; size_t numberOfBytes; unsigned temp; unsigned char *sequencePtr, *writePtr;
-    unsigned char* const writeEnd = ((Byte*)outputBuffer + outputBufferSize);
-    Inf_SLList*    const sllist    = &inf.sllist;
-    Inf_BS*        const bitstream = &inf.bitstream;
+    InfBool canReadAll; InfStep step; size_t numberOfBytes; unsigned temp; unsigned char *writePtr;
+
+    struct Inf_State* st = strm->state.infl_state;
+    const unsigned char* inputBuffer = strm->next_in;
+    size_t inputBufferSize = strm->avail_in;
+    int res = 0;
+    unsigned char* const writeEnd  = ((Byte*)strm->next_out + strm->avail_out);
+    
+    Inf_SLList*    const sllist    = &(st->sllist);
+    Inf_BS*        const bitstream = &(st->bitstream);
     
     assert( inputBuffer !=NULL && inputBufferSize >0 );
-    assert( outputBuffer!=NULL && outputBufferSize>0 );
 
-    switch ( inf.pub.action ) {
+    switch ( st->action ) {
         case InfAction_Init:
-            inf.pub.outputChunk   = (Byte      *)outputBuffer;
-            inf.pub.inputChunkPtr = inf.bitstream.inputPtr = (const Byte*)inputBuffer;
-            inf.pub.inputChunkEnd = inf.bitstream.inputEnd = inf.bitstream.inputPtr + inputBufferSize;
+            st->bitstream.inputPtr = (const Byte*)inputBuffer;
+            st->bitstream.inputEnd = st->bitstream.inputPtr + inputBufferSize;
+            #ifdef MZ_ZLIB_HEADER
+            /* strip zlib stream header */
+            if(*inputBuffer != 0x78){
+                st->action=InfAction_Init;
+                strm->msg = (char *)"incorrect header check";
+                return Z_DATA_ERROR;
+            }
+            if(inputBufferSize == 1){
+                st->action = InfAction_Feed2ndZlibHeaderByte;
+                strm->next_in += 1;
+                strm->avail_in = 0;
+                strm->total_in = 1;
+                return Z_OK;
+            }else if(inputBufferSize == 2){
+                st->action = InfAction_FillInputBuffer;
+                strm->next_in += 2;
+                strm->avail_in = 0;
+                strm->total_in = 2;
+                return Z_OK;
+            }
+            strm->total_in = 2;
+            inputBuffer += 2;
+            inputBufferSize = strm->avail_in -= 2;
+            st->bitstream.inputPtr = (const Byte*)inputBuffer;
+            #endif
             break;
+        #ifdef MZ_ZLIB_HEADER
+        case InfAction_Feed2ndZlibHeaderByte:
+            if(inputBufferSize == 1){
+                st->action = InfAction_FillInputBuffer;
+                strm->next_in += 1;
+                strm->avail_in = 0;
+                strm->total_in = 2;
+                return Z_OK;
+            }
+            strm->total_in = 2;
+            inputBuffer += 1;
+            inputBufferSize = strm->avail_in -= 1;
+            st->bitstream.inputPtr = (const Byte*)inputBuffer;
+            break;
+        #endif
         case InfAction_FillInputBuffer:
-            inf.pub.outputChunk  += inf.pub.outputChunkSize;
-            inf.pub.inputChunkPtr = inf.bitstream.inputPtr = (const Byte*)inputBuffer;
-            inf.pub.inputChunkEnd = inf.bitstream.inputEnd = inf.bitstream.inputPtr + inputBufferSize;
+            st->bitstream.inputPtr = (const Byte*)inputBuffer;
+            st->bitstream.inputEnd = st->bitstream.inputPtr + inputBufferSize;
             break;
         case InfAction_UseOutputBufferContent:
-            inf.pub.outputChunk = (Byte*)outputBuffer;
-            inf.pub.outputBufferContentSize = 0;
             break;
         case InfAction_ProcessNextChunk:
-            inf.pub.outputChunk += inf.pub.outputChunkSize;
             break;
         default: /* InfAction_Finish */
-            inf.pub.outputChunkSize = 0;
-            return inf.pub.action;
+            return res;
     }
 
-    assert( outputBuffer!=NULL && outputBufferSize>=(32*1024) );
-    assert( inf.pub.outputChunk!=NULL && inf.pub.outputChunk<writeEnd );
-    assert( inf.bitstream.inputPtr!=NULL && inf.bitstream.inputPtr<=inf.bitstream.inputEnd );
+    assert(strm->avail_out>0 ); 
+    assert(strm->next_out!=NULL &&strm->next_out<writeEnd );
+    assert( st->bitstream.inputPtr!=NULL && st->bitstream.inputPtr<=st->bitstream.inputEnd );
     
-    step           = (InfStep)inf.step;
-    writePtr       = inf.pub.outputChunk;
-    inf.pub.action = InfAction_ProcessNextChunk;
-    while ( inf.pub.action==InfAction_ProcessNextChunk ) {
+    step       = (InfStep)st->step;
+    writePtr   = strm->next_out;
+    st->action = InfAction_ProcessNextChunk;
+    while ( st->action==InfAction_ProcessNextChunk ) {
         switch (step) {
                 
             case InfStep_START:
-                inf.isLastBlock = 0;
+                st->isLastBlock = 0;
                 inf__fallthrough(InfStep_PROCESS_NEXT_BLOCK);
                 
             /*-------------------------------------------------------------------------------------
              * infstep: PROCESS_NEXT_BLOCK
              */
             case InfStep_PROCESS_NEXT_BLOCK:
-                if (inf.isLastBlock) {
-                    if (writePtr > inf.pub.outputChunk) {
-                        printf(" > END (use remaining output buffer)\n");
-                        inf__USE_OUTPUT_BUFFER_CONTENT();
-                    }
-                    printf(" > END OF STREAM\n\n");
-                    inf__FINISH();
+                if (st->isLastBlock) {
+                    #ifdef MZ_DEBUG
+                    fprintf(stderr, " > END OF STREAM\n\n");
+                    #endif
+                    #ifdef MZ_ZLIB_CHECKSUM
+                    /* reuse this field to store how many bytes of checksum are expected */
+                    st->isLastBlock = 4;
+                    inf__goto(InfStep_ADLER32_CHECKSUM);
+                    #else
+                    st->action = InfAction_Finish;
+                    inf__goto(InfStep_END);
+                    #endif
                 }
                 inf__fallthrough(InfStep_READ_BLOCK_HEADER);
                 
@@ -651,12 +712,17 @@ InfAction inflaterProcessChunk(Inflater*         infptr,
              */
             case InfStep_READ_BLOCK_HEADER:
                 if ( !Inf_BS_ReadBits(bitstream,&temp,3) ) { inf__FILL_INPUT_BUFFER(); }
-                inf.isLastBlock = (temp&0x01);
+                st->isLastBlock = (temp&0x01);
                 switch (temp>>1) {
                     case BlockType_Uncompressed:   inf__goto(InfStep_PROCESS_UNCOMPRESSED_BLOCK);
                     case BlockType_FixedHuffman:   inf__goto(InfStep_LOAD_FIXED_HUFFMAN_DECODERS);
                     case BlockType_DynamicHuffman: inf__goto(InfStep_LOAD_DYNAMIC_HUFFMAN_DECODERS);
-                    default: inf__ERROR(InfError_BadBlockType);
+                    default: 
+                        step = InfStep_FATAL_ERROR;
+                        st->action = InfAction_Finish; 
+                        strm->msg = (char *)"invalid block type";
+                        res = Z_DATA_ERROR;
+                        break;
                 }
                 break;
                 
@@ -665,48 +731,55 @@ InfAction inflaterProcessChunk(Inflater*         infptr,
              */
             case InfStep_PROCESS_UNCOMPRESSED_BLOCK:
                 if ( !Inf_BS_ReadDWord(bitstream,&temp) ) { inf__FILL_INPUT_BUFFER(); }
-                inf.sequence_len = (temp & 0xFFFF);
-                if ( inf.sequence_len != ((~temp)>>16) ) { inf__ERROR(InfError_BadBlockLength); }
+                st->sequence_len = (temp & 0xFFFF);
+                if ( st->sequence_len != ((~temp)>>16) ) {
+                    step = InfStep_FATAL_ERROR;
+                    st->action=InfAction_Finish; 
+                    strm->msg = (char *)"invalid stored block lengths";
+                    res = Z_DATA_ERROR;
+                    break;
+                }
                 inf__fallthrough(InfStep_OUTPUT_UNCOMPRESSED_BLOCK);
                 
             case InfStep_OUTPUT_UNCOMPRESSED_BLOCK:
-                numberOfBytes = min( inf.sequence_len, (writeEnd-writePtr) );
+                numberOfBytes = min( st->sequence_len, (writeEnd-writePtr) );
                 canReadAll    = Inf_BS_ReadBytes(bitstream, writePtr, &numberOfBytes);
-                inf.sequence_len -= numberOfBytes;
+                Inf_Outbuf_write(&(st->outputBuf), writePtr, numberOfBytes);
+                st->sequence_len -= numberOfBytes;
                 writePtr         += numberOfBytes;
                 if      ( !canReadAll        ) { inf__FILL_INPUT_BUFFER();         }
-                else if ( inf.sequence_len>0 ) { inf__USE_OUTPUT_BUFFER_CONTENT(); }
-                assert( inf.sequence_len==0 );
+                else if ( st->sequence_len>0 ) { inf__USE_OUTPUT_BUFFER_CONTENT(); }
+                assert( st->sequence_len==0 );
                 inf__goto(InfStep_PROCESS_NEXT_BLOCK);
 
             /*-------------------------------------------------------------------------------------
              * infstep: LOAD_FIXED_HUFFMAN_DECODERS
              */
             case InfStep_LOAD_FIXED_HUFFMAN_DECODERS:
-                inf.literalDecoder  = Inf_Huff_MakeFixedLiteralDecoder (&inf.sllist);
-                inf.distanceDecoder = Inf_Huff_MakeFixedDistanceDecoder(&inf.sllist);
+                st->literalDecoder  = Inf_Huff_MakeFixedLiteralDecoder (&st->sllist);
+                st->distanceDecoder = Inf_Huff_MakeFixedDistanceDecoder(&st->sllist);
                 inf__goto(InfStep_PROCESS_COMPRESSED_BLOCK);
                 
             /*-------------------------------------------------------------------------------------
              * infstep: LOAD_DYNAMIC_HUFFMAN_DECODERS
              */
             case InfStep_LOAD_DYNAMIC_HUFFMAN_DECODERS:
-                if ( !Inf_BS_ReadBits(bitstream,&inf.symcount,5+5+4) ) { inf__FILL_INPUT_BUFFER(); }
+                if ( !Inf_BS_ReadBits(bitstream,&st->symcount,5+5+4) ) { inf__FILL_INPUT_BUFFER(); }
                 inf__fallthrough(InfStep_LOAD_FRONT_DECODER);
 
             case InfStep_LOAD_FRONT_DECODER:
-                if ( !Inf_SLList_Add3BitSymlens(sllist,bitstream,((inf.symcount>>10)&0x0F)+4) ) { inf__FILL_INPUT_BUFFER(); }
-                inf.frontDecoder = Inf_Huff_MakeDecoder(inf.huffmanTableA, Inf_SLList_GetSorted(sllist,Inf_TRUE));
+                if ( !Inf_SLList_Add3BitSymlens(sllist,bitstream,((st->symcount>>10)&0x0F)+4) ) { inf__FILL_INPUT_BUFFER(); }
+                st->frontDecoder = Inf_Huff_MakeDecoder(st->huffmanTableA, Inf_SLList_GetSorted(sllist,Inf_TRUE));
                 inf__fallthrough(InfStep_LOAD_LITERAL_DECODER);
                 
             case InfStep_LOAD_LITERAL_DECODER:
-                if ( !Inf_SLList_AddEncodedSymlens(sllist,bitstream,(inf.symcount&0x1F)+257,inf.frontDecoder) ) { inf__FILL_INPUT_BUFFER(); }
-                inf.literalDecoder = Inf_Huff_MakeDecoder(inf.huffmanTableB, Inf_SLList_GetSorted(sllist,Inf_FALSE));
+                if ( !Inf_SLList_AddEncodedSymlens(sllist,bitstream,(st->symcount&0x1F)+257, st->frontDecoder) ) { inf__FILL_INPUT_BUFFER(); }
+                st->literalDecoder = Inf_Huff_MakeDecoder(st->huffmanTableB, Inf_SLList_GetSorted(sllist, Inf_FALSE));
                 inf__fallthrough(InfStep_LOAD_DISTANCE_DECODER);
                 
             case InfStep_LOAD_DISTANCE_DECODER:
-                if ( !Inf_SLList_AddEncodedSymlens(sllist,bitstream,((inf.symcount>>5)&0x1F)+1,inf.frontDecoder) ) { inf__FILL_INPUT_BUFFER(); }
-                inf.distanceDecoder = Inf_Huff_MakeDecoder(inf.huffmanTableA, Inf_SLList_GetSorted(sllist,Inf_TRUE));
+                if ( !Inf_SLList_AddEncodedSymlens(sllist,bitstream,((st->symcount>>5)&0x1F)+1, st->frontDecoder) ) { inf__FILL_INPUT_BUFFER(); }
+                st->distanceDecoder = Inf_Huff_MakeDecoder(st->huffmanTableA, Inf_SLList_GetSorted(sllist, Inf_TRUE));
                 inf__fallthrough(InfStep_PROCESS_COMPRESSED_BLOCK);
                 
             /*-------------------------------------------------------------------------------------
@@ -714,38 +787,53 @@ InfAction inflaterProcessChunk(Inflater*         infptr,
              */
             case InfStep_PROCESS_COMPRESSED_BLOCK:
             case InfStep_Read_LiteralOrLength:
-                if ( !Inf_BS_ReadEncodedBits(bitstream,&inf.literal,inf.literalDecoder) ) { inf__FILL_INPUT_BUFFER(); }
+                if ( !Inf_BS_ReadEncodedBits(bitstream, &st->literal, st->literalDecoder) ) { inf__FILL_INPUT_BUFFER(); }
                 inf__fallthrough(InfStep_Read_LiteralOrLength2);
                 
             case InfStep_Read_LiteralOrLength2:
-                if (inf.literal <Inf_EndOfBlock) {
+                if (st->literal <Inf_EndOfBlock) {
                     if (writePtr==writeEnd) { inf__USE_OUTPUT_BUFFER_CONTENT(); }
-                    *writePtr++ = inf.literal;
+                    *writePtr++ = st->literal;
+                    Inf_Outbuf_putc(&(st->outputBuf), (unsigned char)st->literal);
                     inf__goto(InfStep_Read_LiteralOrLength);
                 }
-                else if (inf.literal==Inf_EndOfBlock) {
-                    printf(" > EndOfBlock\n");
+                else if (st->literal==Inf_EndOfBlock) {
+                    #ifdef MZ_DEBUG
+                    fprintf(stderr, " > EndOfBlock\n");
+                    #endif
                     inf__goto(InfStep_PROCESS_NEXT_BLOCK);
                 }
-                else if (inf.literal>Inf_MaxValidLengthCode) { inf__ERROR(InfError_BadBlockContent); }
-                inf.literal -= 257;
+                else if (st->literal>Inf_MaxValidLengthCode) {
+                    step = InfStep_FATAL_ERROR;
+                    st->action = InfAction_Finish; 
+                    strm->msg = (char *)"too many length or distance symbols";
+                    res = Z_DATA_ERROR;
+                    break; 
+                }
+                st->literal -= 257;
                 inf__fallthrough(InfStep_Read_LengthBits);
                 
             case InfStep_Read_LengthBits:
-                if ( !Inf_BS_ReadBits(bitstream, &temp, lengthExtraBits[inf.literal]) ) { inf__FILL_INPUT_BUFFER(); }
-                inf.sequence_len = temp + lengthStarts[inf.literal];
-                assert( inf.sequence_len<(32*1024) );
+                if ( !Inf_BS_ReadBits(bitstream, &temp, lengthExtraBits[st->literal]) ) { inf__FILL_INPUT_BUFFER(); }
+                st->sequence_len = temp + lengthStarts[st->literal];
+                assert( st->sequence_len<(32*1024) );
                 inf__fallthrough(InfStep_Read_Distance);
                 
             case InfStep_Read_Distance:
-                if ( !Inf_BS_ReadEncodedBits(bitstream,&inf.literal,inf.distanceDecoder) ) { inf__FILL_INPUT_BUFFER(); }
-                if (inf.literal>Inf_MaxValidDistanceCode) { inf__ERROR(InfError_BadBlockContent); }
+                if ( !Inf_BS_ReadEncodedBits(bitstream,&st->literal, st->distanceDecoder) ) { inf__FILL_INPUT_BUFFER(); }
+                if (st->literal>Inf_MaxValidDistanceCode) {
+                    step = InfStep_FATAL_ERROR;
+                    st->action = InfAction_Finish; 
+                    strm->msg = (char *)"too many length or distance symbols";
+                    res = Z_DATA_ERROR;
+                    break; 
+                }
                 inf__fallthrough(InfStep_Read_DistanceBits);
                 
             case InfStep_Read_DistanceBits:
-                if ( !Inf_BS_ReadBits(bitstream, &temp, distanceExtraBits[inf.literal]) ) { inf__FILL_INPUT_BUFFER(); }
-                inf.sequence_dist =  temp + distanceStarts[inf.literal];
-                assert( inf.sequence_dist<(32*1024) );
+                if ( !Inf_BS_ReadBits(bitstream, &temp, distanceExtraBits[st->literal]) ) { inf__FILL_INPUT_BUFFER(); }
+                st->sequence_dist =  temp + distanceStarts[st->literal];
+                assert( st->sequence_dist<(32*1024) );
                 inf__fallthrough(InfStep_OUTPUT_SEQUENCE);
 
             /*-------------------------------------------------------------------------------------
@@ -756,163 +844,79 @@ InfAction inflaterProcessChunk(Inflater*         infptr,
              * <... ghost > # [[ straight * overlapped  ...... ghost ]] #
              */
             case InfStep_OUTPUT_SEQUENCE:
-                sequencePtr = writePtr - inf.sequence_dist;
-                if (sequencePtr<(Byte*)outputBuffer) {
-                    sequencePtr += outputBufferSize;
-                    /*-- copy bytes ---*/
-                    inf.sequence_len -= numberOfBytes = min( inf.sequence_len, (writeEnd-sequencePtr) );
-                    memmove( writePtr, sequencePtr, numberOfBytes ); writePtr+=numberOfBytes;
-                    /*-----------------*/
-                    if ( inf.sequence_len==0 ) { inf__goto(InfStep_Read_LiteralOrLength); }
-                    if ( writePtr==writeEnd  ) { inf__USE_OUTPUT_BUFFER_CONTENT();        }
-                    sequencePtr = outputBuffer;
+                ;unsigned int restBytes = writeEnd - writePtr;
+
+                if(restBytes >= st->sequence_len){
+                    int succ = Inf_Outbuf_read(&(st->outputBuf), writePtr, st->sequence_dist, st->sequence_len);
+                    writePtr += st->sequence_len;
+                    st->sequence_len = 0;
+                    if (succ) { inf__goto(InfStep_Read_LiteralOrLength); }
+                } else {
+                    int succ = Inf_Outbuf_read(&(st->outputBuf), writePtr, st->sequence_dist, restBytes);
+                    writePtr = writeEnd;
+                    st->sequence_len  -= restBytes;
+                    if (succ) { inf__USE_OUTPUT_BUFFER_CONTENT(); }
                 }
-                /*-- copy bytes ---*/
-                inf.sequence_len -= numberOfBytes = min( inf.sequence_len, (writeEnd-writePtr) );
-                while ( numberOfBytes-->0 ) { *writePtr++ = *sequencePtr++; }
-                /*-----------------*/
-                if ( inf.sequence_len==0 ) { inf__goto(InfStep_Read_LiteralOrLength); }
-                if ( writePtr==writeEnd  ) { inf__USE_OUTPUT_BUFFER_CONTENT();        }
-                inf__ERROR(InfError_BadBlockContent);
-                
+
+                step = InfStep_FATAL_ERROR;
+                st->action = InfAction_Finish; 
+                res = Z_DATA_ERROR;
+                break;
+
             case InfStep_FATAL_ERROR:
+                break;
+
+            #ifdef MZ_ZLIB_CHECKSUM
+            case InfStep_ADLER32_CHECKSUM:
+                ;unsigned char checksum_buf[4];
+                size_t byte_read = min(st->isLastBlock, (bitstream->inputEnd-bitstream->inputPtr));
+                memcpy(checksum_buf, bitstream->inputPtr, byte_read);
+                bitstream->inputPtr += byte_read;
+                st->isLastBlock -= byte_read;
+                if(st->isLastBlock == 0) { inf__goto(InfStep_END); }
+                inf__FILL_INPUT_BUFFER();
+            #endif
+
             case InfStep_END:
+                res = Z_STREAM_END;
+                st->action = InfAction_Init;
                 break;
         }
     }
     
-    inf.step                         = (unsigned)step;
-    inf.pub.inputChunkPtr            = inf.bitstream.inputPtr;
-    inf.pub.outputChunkSize          = (writePtr - inf.pub.outputChunk);
-    inf.pub.outputBufferContentSize += inf.pub.outputChunkSize;
-    printf(" # inf.action = %d\n", inf.pub.action);
-    return inf.pub.action;
+    st->step        =  (unsigned)step;
+    strm->next_in   =  (unsigned char *)(st->bitstream.inputPtr);
+    unsigned int consumed = strm->next_in - inputBuffer;
+    unsigned int produced = writePtr - strm->next_out;
+
+    strm->avail_in  -= consumed;
+    strm->total_in  += consumed;
+    strm->total_out += produced;
+    strm->next_out  =  writePtr;
+
+    if(st->action != InfAction_UseOutputBufferContent){
+        strm->avail_out -= produced;
+    }else{
+        strm->avail_out = 0;
+    }
+    #ifdef MZ_DEBUG
+    fprintf(stderr, " # inf.action = %d\n", st->action);
+    #endif
+    return res;
 }
 
-
-/**
- * Decompresses a chunk of data
- * @param infptr                Pointer to the `Inflater` object created with `inflaterCreate(..)`
- * @param decompressedData      Pointer to the destination buffer where decompressed data will be stored
- * @param decompressedDataSize  The available capacity of `destBuffer` in number of bytes
- */
-size_t inflaterTake(Inflater* infptr, void* decompressedData, size_t decompressedDataSize) {
-    /* InfAction action; */
-    size_t sourAvailableBytes,destBytesStillNeeded;
-    Byte* dest; const Byte* sour;
-    Byte* outputBuffer; size_t outputBufferSize;
-    int fillInputBuffer;
-
-    /* initialization */
-    assert( (inf.pub.mode==InfMode_Uninitialized) || (inf.pub.mode==InfMode_Take) );
-    if (inf.pub.mode==InfMode_Uninitialized) {
-        inf.pub.mode= InfMode_Take;
-        if (inf.pub.helperOutput.buffer==NULL) {
-            inf.pub.helperOutput.buffer = malloc( inf.pub.helperOutput.bufferSize=InfHelperBufferSize );
-            inf.pub.flags |= InfFlags_FreeOutputBuffer;
-        }
-        if (inf.pub.helperInput.buffer==NULL) {
-            inf.pub.helperInput.buffer  = malloc( inf.pub.helperInput.bufferSize=InfHelperBufferSize );
-            inf.pub.flags |= InfFlags_FreeInputBuffer;
-        }
-        inf.pub.takeOutputPtr           = (Byte*)inf.pub.helperOutput.buffer;
-        inf.pub.takeOutputRemaining     = 0;
-        inf.pub.providedData.buffer     = NULL;
-        inf.pub.providedData.bufferSize = 0;
+int inflateEnd(z_stream* strm) {
+    if (strm) {
+        Inf_Outbuf_Destroy(&(strm->state.infl_state->outputBuf));
+        free((void*) strm->state.infl_state);
+        strm->state.infl_state = Z_NULL;
+        return Z_OK;
     }
-
-    outputBuffer         = (Byte*)inf.pub.helperOutput.buffer;
-    outputBufferSize     =        inf.pub.helperOutput.bufferSize;
-    sour                 =        inf.pub.takeOutputPtr;
-    sourAvailableBytes   =        inf.pub.takeOutputRemaining;
-    dest                 = (Byte*)decompressedData;
-    destBytesStillNeeded =        decompressedDataSize;
-    
-    
-    if ( inf.pub.action==InfAction_Finish ) { return 0; }
-
-    while ( destBytesStillNeeded>0 && inf.pub.action!=InfAction_Finish )
-    {
-        fillInputBuffer = (inf.pub.action==InfAction_Init || inf.pub.action==InfAction_FillInputBuffer);
-        
-        if (inf.pub.action==InfAction_UseOutputBufferContent && sourAvailableBytes>0 ) {
-            /* take available bytes */
-            const size_t size = sourAvailableBytes<destBytesStillNeeded ? sourAvailableBytes : destBytesStillNeeded;
-            memcpy(dest,sour,size); dest+=size; destBytesStillNeeded-=size; sour+=size; sourAvailableBytes-=size;
-            if (sourAvailableBytes==0) { fillInputBuffer=1; sour=outputBuffer; }
-        }
-        if ( fillInputBuffer ) {
-            /* get compressed data from the data provider (when required) */
-            if (inf.pub.action==InfAction_Init || inf.pub.action==InfAction_FillInputBuffer) {
-                inf.pub.providedData=inf.pub.helperInput;
-                inf.pub.dataProviderFunc(&inf.pub, &inf.pub.providedData );
-                if ( inf.pub.providedData.bufferSize==0 ) { break; }
-            }
-            /* decompress the provided data and generate more sourAvailableBytes */
-            do {
-                inflaterProcessChunk(infptr, outputBuffer, outputBufferSize, inf.pub.providedData.buffer, inf.pub.providedData.bufferSize);
-                sourAvailableBytes += inf.pub.outputChunkSize;
-            } while ( inf.pub.action==InfAction_ProcessNextChunk );
-        }
-    }
-    inf.pub.takeOutputPtr=sour; inf.pub.takeOutputRemaining=sourAvailableBytes;
-    return (decompressedDataSize-destBytesStillNeeded);
-}
-
-/**
- * Decompresses a chunk of data
- * @param infptr              Pointer to the `Inflater` object created with `infalterCreate(..)`
- * @param compressedData      Pointer to the source buffer from where compressed data is read
- * @param compressedDataSize  The length of `compressedData` in number of bytes
- */
-size_t inflaterFeed(Inflater* infptr, const void* compressedData, size_t compressedDataSize) {
-    InfAction action; /* size_t numberOfConsumedBytes=0; */
-    Byte* outputBuffer; size_t outputBufferSize;
-    assert( (inf.pub.mode==InfMode_Uninitialized) || (inf.pub.mode=InfMode_Feed) );
-    assert( inf.pub.dataReceiverFunc!=NULL );
-
-    /* initialization */
-    if (inf.pub.mode==InfMode_Uninitialized) {
-        inf.pub.mode= InfMode_Feed;
-        if (inf.pub.helperOutput.buffer==NULL) {
-            inf.pub.helperOutput.buffer = (Byte*)malloc( inf.pub.helperOutput.bufferSize=InfHelperBufferSize );
-            inf.pub.flags = InfFlags_FreeOutputBuffer;
-        }
-    }
-    
-    /* decompression */
-    outputBuffer     = (Byte*)inf.pub.helperOutput.buffer;
-    outputBufferSize =        inf.pub.helperOutput.bufferSize;
-    do {
-        action = inflaterProcessChunk(infptr, outputBuffer, outputBufferSize, compressedData, compressedDataSize);
-        if (action==InfAction_UseOutputBufferContent) {
-            inf.pub.dataReceiverFunc(&inf.pub, outputBuffer, inf.pub.outputBufferContentSize);
-        }
-        /* numberOfConsumedBytes += inf.inputChunkSize; */
-    } while (action==InfAction_ProcessNextChunk || action==InfAction_UseOutputBufferContent);
-    
-/*  return numberOfConsumedBytes;  */
-    return compressedDataSize;
-}
-
-/* receiverFunc     The function that will be called to store the resulting decompressed data */
-
-
-void inflaterDestroy(Inflater* infptr) {
-    if (infptr) {
-        /* delete inf.obj; */
-        if (0!=(inf.pub.flags & InfFlags_FreeInputBuffer  )) { free((void*)inf.pub.helperInput.buffer);  }
-        if (0!=(inf.pub.flags & InfFlags_FreeOutputBuffer )) { free((void*)inf.pub.helperOutput.buffer); }
-        if (0!=(inf.pub.flags & InfFlags_FreeItself       )) { free((void*)infptr);                      }
-    }
+    return Z_STREAM_ERROR;
 }
 
 
 #undef inf__FILL_INPUT_BUFFER
 #undef inf__USE_OUTPUT_BUFFER_CONTENT
-#undef inf__FINISH
-#undef inf__ERROR
 #undef inf__goto
 #undef inf__fallthrough
-
-#undef inf

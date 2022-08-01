@@ -34,6 +34,9 @@
 #define INFLATER_H_INCLUDED
 #include <stdlib.h>
 
+#include "mz_config.h"
+#include "zlib.h"
+
 #undef  Byte
 #define Byte  unsigned char
 
@@ -53,6 +56,7 @@ typedef enum InfAction {
     InfAction_Finish                 = 0,
     InfAction_FillInputBuffer        = 1,
     InfAction_UseOutputBufferContent = 2,
+    InfAction_Feed2ndZlibHeaderByte  = 3,
     InfAction_ProcessNextChunk       = 256,
     InfAction_Init                   = 1024
 } InfAction;
@@ -61,59 +65,5 @@ typedef struct InfData {
     const void* buffer;
     size_t      bufferSize;
 } InfData;
-
-
-struct Inflater;
-typedef void (*InfDataReceiverFunc)(struct Inflater* inflater, const unsigned char* bytes, size_t numberOfBytes);
-typedef void (*InfDataProviderFunc)(struct Inflater* inflater, InfData* data);
-
-
-typedef struct Inflater {
-
-    int       mode;
-    int       flags;
-    InfAction action;
-    InfError  error;
-    
-    void*               userPtr;
-    InfDataProviderFunc dataProviderFunc;
-    InfDataReceiverFunc dataReceiverFunc;
-    
-    /* inflaterProcessChunk(..) */
-
-    Byte*       outputChunk;             /**< pointer to the last decompressed chunk of data  */
-    size_t      outputChunkSize;         /**< number of decompressed bytes in 'outputChunk'   */
-    size_t      outputBufferContentSize; /**< total number of decompressed bytes in OutputBuffer when 'InfAction_UseOutputBufferContent' */
-
-    const Byte* inputChunkPtr;
-    const Byte* inputChunkEnd;
-    /* size_t      inputChunkSize; */
-    
-    
-    /* inflaterTake / inflaterFeed */
-    
-    InfData     helperInput;
-    InfData     helperOutput;
-    const Byte* takeOutputPtr;
-    size_t      takeOutputRemaining;
-    InfData     providedData;
-
-} Inflater;
-
-extern Inflater* inflaterCreate(void* workingBuffer, size_t workingBufferSize);
-extern InfAction inflaterProcessChunk(Inflater* inflater, void* outputBuffer, size_t outputBufferSize, const void* inputBuffer, size_t inputBufferSize);
-extern size_t    inflaterTake(Inflater* inflater, void* dest, size_t destSize);
-extern size_t    inflaterFeed(Inflater* inflater, const void* sour, size_t sourSize);
-extern void      inflaterDestroy(Inflater* inflater);
-
-
-/*=================================================================================================================*/
-#pragma mark - > INTERNAL PRIVATE FUNCTIONS
-
-#ifdef INFLATER_IMPLEMENTATION
-
-
-#endif /* ifdef INFLATER_IMPLEMENTATION */
-
 
 #endif /* ifndef INFLATER_H_INCLUDED */
