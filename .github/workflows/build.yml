@@ -46,19 +46,19 @@ jobs:
           source zephyr-env.sh
           twister -i -G -T tests/
 
-#      - name: Build Samples
-#        working-directory: thrift-for-zephyr
-#        shell: bash
-#        run: |
-#          source zephyr-env.sh
-#          twister -i --build-only -G -T samples/
+      - name: Build Samples
+        working-directory: thrift-for-zephyr
+        shell: bash
+        run: |
+          source zephyr-env.sh
+          twister -i --build-only -G -T samples/
 
-#      - name: Build Samples (POSIX)
-#        working-directory: thrift-for-zephyr
-#        shell: bash
-#        run: |
-#          make -j -C samples/lib/thrift/hello_client
-#          make -j -C samples/lib/thrift/hello_server
+      - name: Build Samples (POSIX)
+        working-directory: thrift-for-zephyr
+        shell: bash
+        run: |
+          make -j -C samples/lib/thrift/hello_client
+          make -j -C samples/lib/thrift/hello_server
 
 #      - name: Archive firmware
 #        uses: actions/upload-artifact@v2
