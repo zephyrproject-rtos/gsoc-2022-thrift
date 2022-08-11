@@ -14,13 +14,11 @@ manifest:
       remote: cfriedt
       path: thrift-for-zephyr/.upstream
       # corresponds to revision: v0.16.0, but the tag does not exist in cfriedt/thrift
-      revision: 7372973987786312da8175e61c58d99e17c12df1
+      revision: 63cad2ee536ead54e6ac75fb5401beb9ab2bbee2
     - name: net-tools
       remote: zephyrproject-rtos
       revision: master
     - name: zephyr
       remote: zephyrproject-rtos
-      # Remove the need for 'posix/' prefix when including std headers
-      # https://github.com/zephyrproject-rtos/zephyr/pull/43987
-      revision: pull/43987/head
+      revision: main
       import: true

@@ -17,7 +17,7 @@
  * See https://pubs.opengroup.org/onlinepubs/9699919799/functions/poll.html
  */
 
-#include <poll.h>
+#include <zephyr/posix/poll.h>
 
 /* sneaking this in here to avoid changing zephyr's <sys/ioctl.h> */
 #ifndef FIONREAD
