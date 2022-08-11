@@ -6,7 +6,7 @@
 
 #include <unistd.h>
 
-#include <ztest.h>
+#include <zephyr/ztest.h>
 
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/protocol/TCompactProtocol.h>
