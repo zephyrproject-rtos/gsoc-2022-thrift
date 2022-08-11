@@ -5,7 +5,7 @@
  */
 
 #ifdef __ZEPHYR__
-#include <zephyr.h>
+#include <zephyr/zephyr.h>
 #endif
 
 #include <cstdio>
