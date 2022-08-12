@@ -17,7 +17,6 @@ config THRIFT
 config THRIFT_ZLIB_TRANSPORT
   bool "Enable TZlibTransport support for Thrift"
   depends on THRIFT
-  select THRIFT_ZLIB
   help
     Enable this option to support TZlibTransport for Thrift
 
