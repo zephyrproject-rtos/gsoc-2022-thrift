@@ -21,22 +21,22 @@ using namespace std;
 
 static void init_Xtruct(Xtruct& s);
 
-void test_void(void) {
+ZTEST(thrift, test_void) {
   context.client->testVoid();
 }
 
-void test_string(void) {
+ZTEST(thrift, test_string) {
   string s;
   context.client->testString(s, "Test");
   zassert_equal(s, "Test", "");
 }
 
-void test_bool(void) {
+ZTEST(thrift, test_bool) {
   zassert_equal(false, context.client->testBool(false), "");
   zassert_equal(true, context.client->testBool(true), "");
 }
 
-void test_byte(void) {
+ZTEST(thrift, test_byte) {
   zassert_equal(0, context.client->testByte(0), "");
   zassert_equal(-1, context.client->testByte(-1), "");
   zassert_equal(42, context.client->testByte(42), "");
@@ -45,7 +45,7 @@ void test_byte(void) {
   zassert_equal(-128, context.client->testByte(-128), "");
 }
 
-void test_i32(void) {
+ZTEST(thrift, test_i32) {
   zassert_equal(0, context.client->testI32(0), "");
   zassert_equal(-1, context.client->testI32(-1), "");
   zassert_equal(190000013, context.client->testI32(190000013), "");
@@ -54,7 +54,7 @@ void test_i32(void) {
   zassert_equal(INT32_MIN, context.client->testI32(INT32_MIN), "");
 }
 
-void test_i64(void) {
+ZTEST(thrift, test_i64) {
   zassert_equal(0, context.client->testI64(0), "");
   zassert_equal(-1, context.client->testI64(-1), "");
   zassert_equal(7000000000000000123LL, context.client->testI64(7000000000000000123LL), "");
@@ -63,7 +63,7 @@ void test_i64(void) {
   zassert_equal(INT64_MIN, context.client->testI64(INT64_MIN), "");
 }
 
-void test_double(void) {
+ZTEST(thrift, test_double) {
   zassert_equal(0.0, context.client->testDouble(0.0), "");
   zassert_equal(-1.0, context.client->testDouble(-1.0), "");
   zassert_equal(-5.2098523, context.client->testDouble(-5.2098523), "");
@@ -72,7 +72,7 @@ void test_double(void) {
   zassert_equal(-DBL_MAX, context.client->testDouble(-DBL_MAX), "");
 }
 
-void test_binary(void) {
+ZTEST(thrift, test_binary) {
   string rsp;
 
   context.client->testBinary(rsp, "");
@@ -83,7 +83,7 @@ void test_binary(void) {
   zassert_equal("H\x03\x01\x01\x00", rsp, "");
 }
 
-void test_struct(void) {
+ZTEST(thrift, test_struct) {
   Xtruct request_struct;
   init_Xtruct(request_struct);
   Xtruct response_struct;
@@ -92,7 +92,7 @@ void test_struct(void) {
   zassert_equal(response_struct, request_struct, NULL);
 }
 
-void test_nested_struct(void) {
+ZTEST(thrift, test_nested_struct) {
   Xtruct2 request_struct;
   request_struct.byte_thing = 1;
   init_Xtruct(request_struct.struct_thing);
@@ -103,7 +103,7 @@ void test_nested_struct(void) {
   zassert_equal(response_struct, request_struct, NULL);
 }
 
-void test_map(void) {
+ZTEST(thrift, test_map) {
   static const map<int32_t, int32_t> request_map = {{0, -10}, {1, -9}, {2, -8}, {3, -7}, {4, -6}};
 
   map<int32_t, int32_t> response_map;
@@ -112,7 +112,7 @@ void test_map(void) {
   zassert_equal(request_map, response_map, "");
 }
 
-void test_string_map(void) {
+ZTEST(thrift, test_string_map) {
   static const map<string, string> request_smap = {{"a", "2"}, {"b", "blah"}, {"some", "thing"}};
   map<string, string> response_smap;
 
@@ -120,7 +120,7 @@ void test_string_map(void) {
   zassert_equal(response_smap, request_smap, "");
 }
 
-void test_set(void) {
+ZTEST(thrift, test_set) {
   static const set<int32_t> request_set = {-2, -1, 0, 1, 2};
 
   set<int32_t> response_set;
@@ -129,7 +129,7 @@ void test_set(void) {
   zassert_equal(request_set, response_set, "");
 }
 
-void test_list(void) {
+ZTEST(thrift, test_list) {
   vector<int32_t> response_list;
   context.client->testList(response_list, vector<int32_t>());
   zassert_true(response_list.empty(), "Unexpected list size: %llu", response_list.size());
@@ -141,7 +141,7 @@ void test_list(void) {
   zassert_equal(request_list, response_list, "");
 }
 
-void test_enum(void) {
+ZTEST(thrift, test_enum) {
   Numberz::type response = context.client->testEnum(Numberz::ONE);
   zassert_equal(response, Numberz::ONE, NULL);
 
@@ -152,12 +152,12 @@ void test_enum(void) {
   zassert_equal(response, Numberz::EIGHT, NULL);
 }
 
-void test_typedef(void) {
+ZTEST(thrift, test_typedef) {
   UserId uid = context.client->testTypedef(309858235082523LL);
   zassert_equal(uid, 309858235082523LL, "Unexpected uid: %llu", uid);
 }
 
-void test_nested_map(void) {
+ZTEST(thrift, test_nested_map) {
   map<int32_t, map<int32_t, int32_t>> mm;
   context.client->testMapMap(mm, 1);
 
@@ -172,7 +172,7 @@ void test_nested_map(void) {
   zassert_equal(mm[4][1], 1, NULL);
 }
 
-void test_exception(void) {
+ZTEST(thrift, test_exception) {
   std::exception_ptr eptr = nullptr;
 
   try {
@@ -193,7 +193,7 @@ void test_exception(void) {
   context.client->testException("success");
 }
 
-void test_multi_exception(void) {
+ZTEST(thrift, test_multi_exception) {
   std::exception_ptr eptr = nullptr;
 
   try {

@@ -24,26 +24,6 @@ using namespace apache::thrift;
 using namespace apache::thrift::protocol;
 using namespace apache::thrift::transport;
 
-extern void test_void(void);
-extern void test_string(void);
-extern void test_bool(void);
-extern void test_byte(void);
-extern void test_i32(void);
-extern void test_i64(void);
-extern void test_double(void);
-extern void test_binary(void);
-extern void test_struct(void);
-extern void test_nested_struct(void);
-extern void test_map(void);
-extern void test_string_map(void);
-extern void test_set(void);
-extern void test_list(void);
-extern void test_enum(void);
-extern void test_typedef(void);
-extern void test_nested_map(void);
-extern void test_exception(void);
-extern void test_multi_exception(void);
-
 ctx context;
 
 static K_THREAD_STACK_DEFINE(ThriftTest_server_stack, CONFIG_THRIFTTEST_SERVER_STACK_SIZE);
@@ -95,7 +75,8 @@ static std::unique_ptr<TServer> setup_server() {
       new TSimpleServer(processor, serverTransport, transportFactory, protocolFactory));
 }
 
-static void setup(void) {
+static void thrift_test_before(void* data) {
+  ARG_UNUSED(data);
   int rv;
 
   pthread_attr_t attr;
@@ -125,7 +106,8 @@ static void setup(void) {
   zassert_equal(0, rv, "pthread_create failed: %d", rv);
 }
 
-static void teardown(void) {
+static void thrift_test_after(void* data) {
+  ARG_UNUSED(data);
   void* unused;
 
   context.server->stop();
@@ -141,25 +123,4 @@ static void teardown(void) {
   }
 }
 
-void test_main(void) {
-  ztest_test_suite(thrift_test, ztest_unit_test_setup_teardown(test_void, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_string, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_bool, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_byte, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_i32, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_i64, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_double, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_binary, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_struct, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_nested_struct, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_map, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_string_map, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_set, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_list, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_enum, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_typedef, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_nested_map, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_exception, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_multi_exception, setup, teardown));
-  ztest_run_test_suite(thrift_test);
-}
+ZTEST_SUITE(thrift, NULL, NULL, thrift_test_before, thrift_test_after, NULL);
