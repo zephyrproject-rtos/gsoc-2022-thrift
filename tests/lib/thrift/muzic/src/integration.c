@@ -28,7 +28,8 @@ static const char sample[]
 static z_stream* deflater;
 static z_stream* inflater;
 
-static void setup() {
+static void muzic_test_before(void* data) {
+  ARG_UNUSED(data);
   deflater = (z_stream*)malloc(sizeof(z_stream));
   zassert_not_equal(deflater, NULL, NULL);
   deflater->next_in = Z_NULL;
@@ -58,7 +59,8 @@ static void setup() {
   memset(infl_buf, 0, sizeof(infl_buf));
 }
 
-static void teardown() {
+static void muzic_test_after(void* data) {
+  ARG_UNUSED(data);
   deflateEnd(deflater);
   free(deflater);
   deflater = NULL;
@@ -67,7 +69,7 @@ static void teardown() {
   inflater = NULL;
 }
 
-static void test_deflate_finish() {
+ZTEST(muzic, test_deflate_finish) {
   deflater->next_in = (unsigned char*)sample;
   deflater->avail_in = sizeof(sample);
   deflater->next_out = defl_buf;
@@ -97,7 +99,7 @@ static void test_deflate_finish() {
   zassert_equal(memcmp(infl_buf, sample, sizeof(sample)), 0, NULL);
 }
 
-static void test_deflate_full_flush() {
+ZTEST(muzic, test_deflate_full_flush) {
   deflater->next_in = (unsigned char*)sample;
   deflater->avail_in = sizeof(sample);
   deflater->next_out = defl_buf;
@@ -127,7 +129,7 @@ static void test_deflate_full_flush() {
   zassert_equal(memcmp(infl_buf, sample, sizeof(sample)), 0, NULL);
 }
 
-static void test_deflate_full_flush_frag_in() {
+ZTEST(muzic, test_deflate_full_flush_frag_in) {
   deflater->next_in = (unsigned char*)sample;
   deflater->next_out = defl_buf;
   deflater->avail_out = sizeof(defl_buf);
@@ -168,7 +170,7 @@ static void test_deflate_full_flush_frag_in() {
   zassert_equal(memcmp(infl_buf, sample, sizeof(sample)), 0, NULL);
 }
 
-static void test_deflate_finish_frag_out() {
+ZTEST(muzic, test_deflate_finish_frag_out) {
   deflater->next_in = (unsigned char*)sample;
   deflater->avail_in = sizeof(sample);
   deflater->next_out = defl_buf;
@@ -178,7 +180,7 @@ static void test_deflate_finish_frag_out() {
   zassert_equal(res, Z_BUF_ERROR, NULL);
 }
 
-static void test_deflate_full_flush_frag_out() {
+ZTEST(muzic, test_deflate_full_flush_frag_out) {
   unsigned char defl_buf[4096];
 
   deflater->next_in = (unsigned char*)sample;
@@ -215,7 +217,7 @@ static void test_deflate_full_flush_frag_out() {
   zassert_equal(memcmp(infl_buf, sample, sizeof(sample)), 0, NULL);
 }
 
-static void test_inflate_frag_in() {
+ZTEST(muzic, test_inflate_frag_in) {
   deflater->next_in = (unsigned char*)sample;
   deflater->avail_in = sizeof(sample);
   deflater->next_out = defl_buf;
@@ -253,7 +255,7 @@ static void test_inflate_frag_in() {
   zassert_equal(memcmp(infl_buf, sample, sizeof(sample)), 0, NULL);
 }
 
-static void test_inflate_frag_out() {
+ZTEST(muzic, test_inflate_frag_out) {
   deflater->next_in = (unsigned char*)sample;
   deflater->avail_in = sizeof(sample);
   deflater->next_out = defl_buf;
@@ -293,7 +295,7 @@ static void test_inflate_frag_out() {
 }
 
 /* Output large enough to make the internal buffer of inflate rewind */
-static void test_inflate_buf_rewind() {
+ZTEST(muzic, test_inflate_buf_rewind) {
   unsigned int len = test_max_sample_size;
   static char largeInput[test_max_sample_size];
 
@@ -324,15 +326,4 @@ static void test_inflate_buf_rewind() {
   zassert_equal(memcmp(infl_buf, largeInput, sizeof(largeInput)), 0, NULL);
 }
 
-void test_main() {
-  ztest_test_suite(muzic_test, ztest_unit_test_setup_teardown(test_deflate_finish, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_deflate_full_flush, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_deflate_full_flush_frag_in, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_deflate_finish_frag_out, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_deflate_full_flush_frag_out, setup,
-                                                  teardown),
-                   ztest_unit_test_setup_teardown(test_inflate_frag_in, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_inflate_frag_out, setup, teardown),
-                   ztest_unit_test_setup_teardown(test_inflate_buf_rewind, setup, teardown));
-  ztest_run_test_suite(muzic_test);
-}
+ZTEST_SUITE(muzic, NULL, NULL, muzic_test_before, muzic_test_after, NULL);
