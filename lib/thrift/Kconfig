@@ -14,11 +14,14 @@ config THRIFT
   help
     Enable this option to support Apache Thrift
 
+if THRIFT
+
 config THRIFT_ZLIB_TRANSPORT
   bool "Enable TZlibTransport support for Thrift"
-  depends on THRIFT
   help
     Enable this option to support TZlibTransport for Thrift
+
+endif # THRIFT
 
 endmenu
 
