@@ -31,6 +31,11 @@ zephyr_library_sources(
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/TOutput.cpp
 )
 
+zephyr_library_sources_ifdef(CONFIG_THRIFT_SSL_SOCKET
+  src/thrift/transport/TSSLSocket.cpp
+  src/thrift/transport/TSSLServerSocket.cpp
+)
+
 zephyr_library_sources_ifdef(CONFIG_THRIFT_ZLIB_TRANSPORT
   src/defl_static.c
   src/genlz77.c
