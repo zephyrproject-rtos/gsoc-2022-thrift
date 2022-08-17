@@ -16,6 +16,14 @@ config THRIFT
 
 if THRIFT
 
+config THRIFT_SSL_SOCKET
+  bool "Enable TSSLSocket support for Thrift"
+  depends on MBEDTLS
+  depends on MBEDTLS_PEM_CERTIFICATE_FORMAT
+  depends on NET_SOCKETS_SOCKOPT_TLS
+  help
+    Enable this option to support TSSLSocket for Thrift
+    
 config THRIFT_ZLIB_TRANSPORT
   bool "Enable TZlibTransport support for Thrift"
   help
