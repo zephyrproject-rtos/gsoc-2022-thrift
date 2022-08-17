@@ -13,6 +13,8 @@
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/transport/TFDTransport.h>
+#include <thrift/transport/TSSLServerSocket.h>
+#include <thrift/transport/TSSLSocket.h>
 #include <thrift/transport/TServerSocket.h>
 #include <thrift/transport/TZlibTransport.h>
 
@@ -36,9 +38,34 @@ static void* server_func(void* arg) {
   return nullptr;
 }
 
+static void* thrift_test_setup(void) {
+  if (IS_ENABLED(CONFIG_THRIFT_SSL_SOCKET)) {
+    TSSLSocketFactory socketFactory;
+    socketFactory.loadCertificateFromBuffer(
+#include "../../../../../samples/lib/thrift/hello_common/qemu-cert.pem"
+    );
+    socketFactory.loadPrivateKeyFromBuffer(
+#include "../../../../../samples/lib/thrift/hello_common/qemu-key.pem"
+    );
+    socketFactory.loadTrustedCertificatesFromBuffer(
+#include "../../../../../samples/lib/thrift/hello_common/qemu-cert.pem"
+    );
+  }
+
+  return NULL;
+}
+
 static std::unique_ptr<ThriftTestClient> setup_client() {
   std::shared_ptr<TTransport> trans(new TFDTransport(context.fds[ctx::CLIENT]));
-  std::shared_ptr<TTransport> transport(new TBufferedTransport(trans));
+  if (IS_ENABLED(CONFIG_THRIFT_SSL_SOCKET)) {
+    const int port = 4242;
+    std::shared_ptr<TSSLSocketFactory> socketFactory = std::make_shared<TSSLSocketFactory>();
+    socketFactory->authenticate(true);
+    trans = socketFactory->createSocket(CONFIG_NET_CONFIG_MY_IPV4_ADDR, port);
+  } else {
+    trans = std::make_shared<TFDTransport>(context.fds[ctx::CLIENT]);
+  }
+  std::shared_ptr<TTransport> transport;
   if (IS_ENABLED(CONFIG_THRIFT_ZLIB_TRANSPORT)) {
     transport = std::make_shared<TZlibTransport>(trans);
   } else {
@@ -57,7 +84,15 @@ static std::unique_ptr<ThriftTestClient> setup_client() {
 static std::unique_ptr<TServer> setup_server() {
   std::shared_ptr<TestHandler> handler(new TestHandler());
   std::shared_ptr<TProcessor> processor(new ThriftTestProcessor(handler));
-  std::shared_ptr<TServerTransport> serverTransport(new TFDServer(context.fds[ctx::SERVER]));
+  std::shared_ptr<TServerTransport> serverTransport;
+  if (IS_ENABLED(CONFIG_THRIFT_SSL_SOCKET)) {
+    const int port = 4242;
+    std::shared_ptr<TSSLSocketFactory> socketFactory(new TSSLSocketFactory());
+    socketFactory->server(true);
+    serverTransport = std::make_shared<TSSLServerSocket>("0.0.0.0", port, socketFactory);
+  } else {
+    serverTransport = std::make_shared<TFDServer>(context.fds[ctx::SERVER]);
+  }
   std::shared_ptr<TTransportFactory> transportFactory;
   if (IS_ENABLED(CONFIG_THRIFT_ZLIB_TRANSPORT)) {
     transportFactory = std::make_shared<TZlibTransportFactory>();
@@ -98,12 +133,12 @@ static void thrift_test_before(void* data) {
   // set up server
   context.server = setup_server();
 
-  // set up client
-  context.client = setup_client();
-
   // start the server
   rv = pthread_create(&context.server_thread, attrp, server_func, nullptr);
   zassert_equal(0, rv, "pthread_create failed: %d", rv);
+
+  // set up client
+  context.client = setup_client();
 }
 
 static void thrift_test_after(void* data) {
@@ -123,4 +158,4 @@ static void thrift_test_after(void* data) {
   }
 }
 
-ZTEST_SUITE(thrift, NULL, NULL, thrift_test_before, thrift_test_after, NULL);
+ZTEST_SUITE(thrift, NULL, thrift_test_setup, thrift_test_before, thrift_test_after, NULL);
