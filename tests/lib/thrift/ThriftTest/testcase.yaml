@@ -22,6 +22,26 @@ tests:
       - CONFIG_THRIFT_ZLIB_TRANSPORT=y
       - CONFIG_NEWLIB_LIBC_MAX_MAPPED_REGION_SIZE=4194304
     tags: newlib
+  thrift.ThriftTest.newlib.tlsTransport:
+    extra_configs:
+      - CONFIG_THRIFT_SSL_SOCKET=y
+      - CONFIG_MBEDTLS=y
+      - CONFIG_MBEDTLS_PEM_CERTIFICATE_FORMAT=y
+      - CONFIG_MBEDTLS_ENABLE_HEAP=y
+      - CONFIG_MBEDTLS_HEAP_SIZE=60000
+      - CONFIG_MBEDTLS_SSL_MAX_CONTENT_LEN=2048
+      - CONFIG_NET_SOCKETS_TLS_MAX_CONTEXTS=6
+      - CONFIG_NET_SOCKETS_SOCKOPT_TLS=y
+      - CONFIG_NET_TCP=y
+      - CONFIG_NET_SOCKETS=y
+      - CONFIG_NET_BUF_TX_COUNT=64
+      - CONFIG_NET_PKT_TX_COUNT=64
+      - CONFIG_NET_BUF_RX_COUNT=64
+      - CONFIG_NET_PKT_RX_COUNT=64
+      - CONFIG_POSIX_MAX_FDS=64
+    integration_platforms:
+      - mps2_an385
+    tags: newlib
 #  thrift.hello.native:
 #    arch_allow: posix
 #    tags: native
