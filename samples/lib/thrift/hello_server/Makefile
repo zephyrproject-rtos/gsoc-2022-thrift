@@ -15,9 +15,10 @@ GENOBJ = $(filter-out %.h, $(GENSRC:.cpp=.o))
 THRIFT_FLAGS :=
 THRIFT_FLAGS += $(shell pkg-config --cflags thrift)
 THRIFT_FLAGS += -I$(GEN_DIR)
+THRIFT_LIBS :=
 THRIFT_LIBS = $(shell pkg-config --libs thrift)
 
-all: hello_server
+all: hello_server hello_server_compact hello_server_zlib hello_server_ssl
 
 hello_server.stamp: ../../../../thrift/hello.thrift
 	thrift --gen cpp:no_skeleton $<
@@ -30,5 +31,14 @@ $(GENSRC): hello_server.stamp
 hello_server: src/main.cpp  $(GENOBJ) $(GENHDR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(THRIFT_FLAGS) -o $@ $< $(GENOBJ) $(THRIFT_LIBS)
 
+hello_server_compact: src/main.cpp  $(GENOBJ) $(GENHDR)
+	$(CXX) -DCONFIG_THRIFT_COMPACT_PROTOCOL=1  $(CPPFLAGS) $(CXXFLAGS) $(THRIFT_FLAGS) -o $@ $< $(GENOBJ) $(THRIFT_LIBS)
+
+hello_server_zlib: src/main.cpp  $(GENOBJ) $(GENHDR)
+	$(CXX) -DCONFIG_THRIFT_ZLIB_TRANSPORT=1 $(CPPFLAGS) $(CXXFLAGS) $(THRIFT_FLAGS) -o $@ $< $(GENOBJ) $(THRIFT_LIBS) -lthriftz
+
+hello_server_ssl: src/main.cpp  $(GENOBJ) $(GENHDR)
+	$(CXX) -DCONFIG_THRIFT_SSL_SOCKET=1 $(CPPFLAGS) $(CXXFLAGS) $(THRIFT_FLAGS) -o $@ $< $(GENOBJ) $(THRIFT_LIBS)
+
 clean:
-	rm -Rf hello_server $(GEN_DIR)
+	rm -Rf hello_server hello_server_compact hello_server_zlib hello_server_ssl $(GEN_DIR)
