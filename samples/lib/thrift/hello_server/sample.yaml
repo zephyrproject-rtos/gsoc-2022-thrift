@@ -12,7 +12,18 @@ common:
     - mps2_an385
     - qemu_x86_64
 tests:
-  thrift.hello.newlib:
+  thrift.ThriftTest.newlib.binaryProtocol:
+    tags: newlib
+  thrift.ThriftTest.newlib.compactProtocol:
+    extra_configs:
+      - CONFIG_THRIFT_COMPACT_PROTOCOL=y
+    tags: newlib
+  thrift.ThriftTest.newlib.zlibTransport:
+    extra_configs:
+      - CONFIG_THRIFT_ZLIB_TRANSPORT=y
+    tags: newlib
+  thrift.ThriftTest.newlib.tlsTransport:
+    extra_args: OVERLAY_CONFIG="../hello_common/overlay-tls.conf"
     tags: newlib
 #  thrift.hello.native:
 #    arch_allow: posix

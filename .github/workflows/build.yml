@@ -52,6 +52,26 @@ jobs:
         run: |
           source zephyr-env.sh
           twister -i --build-only -G -T samples/
+  
+  build-posix:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: thrift-for-zephyr
+
+      - name: Update APT package database
+        working-directory: /
+        shell: bash
+        run: |
+          sudo apt-get update
+
+      - name: Install Thrift
+        working-directory: /
+        shell: bash
+        run: |
+          sudo apt install -y libboost-all-dev thrift-compiler libthrift-dev
 
       - name: Build Samples (POSIX)
         working-directory: thrift-for-zephyr
