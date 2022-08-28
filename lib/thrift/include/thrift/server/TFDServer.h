@@ -18,6 +18,11 @@ namespace transport {
 class TFDServer : public TServerTransport {
 
 public:
+  /**
+   * Constructor.
+   *
+   * @param fd    file descriptor of the socket
+   */
   TFDServer(int fd);
   virtual ~TFDServer();
 
