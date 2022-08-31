@@ -6,9 +6,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 set(THRIFT_UPSTREAM "${CMAKE_CURRENT_SOURCE_DIR}/../../.upstream")
 
-# needed in order to expose some C++ class definitions in Newlib
-target_compile_definitions(app PUBLIC _GLIBCXX_HAS_GTHREADS=1)
-
 zephyr_library()
 zephyr_include_directories(include)
 zephyr_include_directories(${THRIFT_UPSTREAM}/lib/cpp/src)
@@ -43,3 +40,6 @@ zephyr_library_sources_ifdef(CONFIG_THRIFT_ZLIB_TRANSPORT
   src/zlib_comp.c
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TZlibTransport.cpp
 )
+
+# needed because std::iterator was deprecated with -std=c++17
+zephyr_library_compile_options(-Wno-deprecated-declarations)
