@@ -14,7 +14,7 @@ manifest:
       remote: cfriedt
       path: thrift-for-zephyr/.upstream
       # corresponds to revision: v0.16.0, but the tag does not exist in cfriedt/thrift
-      revision: 63cad2ee536ead54e6ac75fb5401beb9ab2bbee2
+      revision: b455e5d8e245fbe2568bb28093eb1f7f9d65d442
     - name: net-tools
       remote: zephyrproject-rtos
       revision: master
