@@ -16,11 +16,6 @@ jobs:
       # To prevent apt from prompting the user to enter locale info
       DEBIAN_FRONTEND: noninteractive
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          path: thrift-for-zephyr
-
       - name: Update APT package database
         working-directory: /
         run: |
@@ -32,21 +27,34 @@ jobs:
           apt install -y libboost-all-dev thrift-compiler libthrift-dev
 
       - name: Initialize Project with West
-        working-directory: thrift-for-zephyr
         run: |
           pip3 install -U west
-          west init -l .
+          west init zephyrproject
+          cd zephyrproject
           west update
-          pip3 install -r ../zephyr/scripts/requirements-base.txt
+
+      - name: Checkout Thrift Module
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          path: zephyrproject/modules/lib/thrift
+
+      # This might not even be necessary - please experiment
+      - name: Add Thrift Submanifest
+        working-directory: zephyrproject/zephyr
+        shell: bash
+        # users should use cat << EOF here as shown in docs
+        run: |
+          cp ../modules/lib/thrift/scripts/99-thrift.yaml submanifests
 
       - name: Build and Run Testsuite
-        working-directory: thrift-for-zephyr
+        working-directory: zephyrproject/zephyr
         run: |
           source zephyr-env.sh
-          twister -i -G -T tests/
+          twister -i -G -T ../modules/lib/thrift/tests
 
       - name: Build Samples
-        working-directory: thrift-for-zephyr
+        working-directory: zephyrproject/zephyr
         run: |
           source zephyr-env.sh
-          twister -i --build-only -G -T samples/
+          twister -i --build-only -G -T ../modules/lib/thrift/samples/
