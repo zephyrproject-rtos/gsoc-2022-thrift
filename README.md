@@ -16,6 +16,31 @@ Before getting started, make sure you have a proper Zephyr development
 environment by following the official
 [Zephyr Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html).
 
+Then, copy [99-thrift.yaml](submanifests/99-thrift.yaml)
+in this repository to `zephyrproject/zephyr/submanifests/`, and run `west update` again:
+```shell
+cat << EOF > submanifests/99-thrift.yaml
+manifest:
+  defaults:
+    remote: upstream
+
+  remotes:
+    - name: upstream
+      url-base: https://github.com/zephyrproject-rtos
+    - name: cfriedt
+      url-base: https://github.com/cfriedt
+
+  projects:
+    - name: gsoc-2022-thrift
+      path: modules/lib/thrift
+      revision: main
+    - name: thrift
+      remote: cfriedt
+      path: modules/lib/thrift/.upstream
+EOF
+west update
+```
+
 ### Installing Thrift Binary
 
 **MacOS**
@@ -28,56 +53,7 @@ brew install thrift
 apt install -y libboost-all-dev thrift-compiler libthrift-dev
 ```
 
-### Initialization
-
-The first step is to initialize the workspace folder (``~/my-workspace``) where
-the ``thrift-for-zephyr`` and all Zephyr modules will be cloned. You can do
-that by running:
-
-```shell
-export WS=~/my-workspace
-# initialize my-workspace for thrift-for-zephyr (main branch)
-west init -m https://github.com/zephyrproject-rtos/gsoc-2022-thrift --mr main ${WS}
-# update Zephyr modules
-cd ${WS}
-west update
-```
-
-### One-time Setup
-
-If this is the first time building Zephyr, please set up your `~/.zephyrrc` file:
-```shell
-export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
-# Will vary based on the installed SDK version
-export ZEPHYR_SDK_INSTALL_DIR=~/zephyr-sdk-0.13.1
-```
-
-For networked examples (Linux-only for now), run the following to build additional
-network utilities.
-```shell
-cd ${WS}/net-tools
-make
-```
-
-### Qemu Setup
-
-When running Zephyr inside of Qemu, a UNIX domain socket is used as a virtual serial port.
-Run this command in the background (with `&`). Later, the process can be stopped with
-`fg` and  `Ctrl+C`.
-```shell
-${WS}/net-tools/loop-socat.sh &
-```
-
-For networked examples (Linux-only for now), do the following:
-```
-sudo ${WS}/net-tools/loop-slip-tap.sh
-# Enter password when prompted
-# press Ctrl+Z to background the process
-```
-
-Support for networked examples under macOS is a [work-in-progress](https://github.com/zephyrproject-rtos/zephyr/issues/15738). Thank you for your patience.
-
-## Supported Stacks
+## Supported Features
 - Low-Level Transports: Domain, Socket, TLS
 - Transport Wrappers: Buffer, Zlib
 - Protocols: Binary, Compact
@@ -101,45 +77,3 @@ service Hello {
 It describes a service `Hello` with 3 methods. The first one takes no argument and returns no value. The second one has a string-type argument and returns a string. The third one takes no argument and returns a 32-bit integer.
 
 The sample application includes a client a server which implemented the service above. The client-side code is under [samples/lib/thrift/hello_client](samples/lib/thrift/hello_client) and the server is under [samples/lib/thrift/hello_server](samples/lib/thrift/hello_server). See the [documentation](samples/lib/thrift/README.rst) of the sample for more information.
-
-### Build & Run the Testsuite
-
-Run the testsuite with:
-```shell
-cd ${WS}/thrift-for-zephyr
-source zephyr-env.sh
-west build -p auto -b qemu_x86_64 -t run tests/lib/thrift/hello
-...
-Booting from ROM..
-SeaBIOS (version rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org)
-*** Booting Zephyr OS build zephyr-v3.0.0-1366-g1c66e53f7846  ***
-Running test suite thrift_hello
-===================================================================
-START - test_hello
-Starting the server...
-ping
-echo: Hello, world!
-counter: 1
-counter: 2
-counter: 3
-counter: 4
-counter: 5
-Server is done
- PASS - test_hello in 0.18 seconds
-===================================================================
-Test suite thrift_hello succeeded
-===================================================================
-PROJECT EXECUTION SUCCESSFUL
-```
-
-## Contributors
-[Brandon Thomas Ruggles](https://github.com/brandontruggles)
-
-[Christopher Friedt](https://github.com/cfriedt)
-
-[Stephanos Ioannidis](https://github.com/stephanosio)
-
-[Young Mei](https://github.com/SdtElectronics)
-
-## License
-Apache-2.0
