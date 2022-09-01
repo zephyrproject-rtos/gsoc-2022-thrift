@@ -49,10 +49,43 @@ used in each layer of them are listed below:
 The same applies for the server. Only the client and the server with the
 same set of stacks can communicate.
 
-QEMU network setup
-==================
 
-Please refer to the Qemu Setup section in the top-level README.
+Build net-tools
+===============
+
+Fetch and build the Zephyr net-tools project, which is located in a separate 
+Git repository:
+
+.. code-block:: console
+
+   $ git clone https://github.com/zephyrproject-rtos/net-tools
+   $ cd net-tools
+   $ make
+
+
+Qemu Setup
+==========
+
+When running Zephyr inside of Qemu, a UNIX domain socket is used as a virtual serial port.
+Run this command in the background (with ``&``). Later, the process can be stopped with
+``fg`` and  ``Ctrl+C``.
+
+.. code-block:: console
+
+   $ net-tools/loop-socat.sh &
+
+
+For networked examples (Linux-only for now), do the following:
+
+.. code-block:: console
+
+   $ sudo net-tools/loop-slip-tap.sh
+   # Enter password when prompted
+   # press Ctrl+Z to background the process
+
+
+Support for networked examples under macOS is a `work-in-progress<https://github.com/zephyrproject-rtos/zephyr/issues/15738>`_. Thank you for your patience.
+
 
 Running zephyr server in QEMU
 =============================
@@ -62,7 +95,7 @@ Build the Zephyr version of the thrift application like this:
 Build ``echo-server`` sample application like this:
 
 .. zephyr-app-commands::
-   :zephyr-app: samples/lib/thrift/hello_server
+   :zephyr-app: ../modules/lib/thrift/samples/lib/thrift/hello_server
    :board: <board to use>
    :goals: build
    :compact:
@@ -77,7 +110,7 @@ To enable advanced features, extra arguments should be passed accordingly:
 Example building for the mps2_an385 with TSSLSocket support:
 
 .. zephyr-app-commands::
-   :zephyr-app: samples/lib/thrift/hello_server
+   :zephyr-app: ../modules/lib/thrift/samples/lib/thrift/hello_server
    :host-os: unix
    :board: mps2_an385
    :conf: "prj.conf ../hello_common/overlay-tls.conf"
@@ -120,7 +153,7 @@ with:
 
 .. code-block:: console
   
-    west build -p auto -b qemu_x86_64 -t run samples/lib/thrift/hello_client \
+    west build -p auto -b qemu_x86_64 -t run ../modules/lib/thrift/samples/lib/thrift/hello_client \
         -DCONFIG_NET_CONFIG_NEED_IPV6=n \
         -DCONFIG_NET_CONFIG_MY_IPV4_ADDR=\"192.0.2.1\" \
         -DCONFIG_NET_CONFIG_PEER_IPV4_ADDR=\"192.0.2.2\"
