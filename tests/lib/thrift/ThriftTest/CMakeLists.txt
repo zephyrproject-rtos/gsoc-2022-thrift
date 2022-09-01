@@ -37,3 +37,6 @@ thrift(
 )
 
 target_sources(app PRIVATE ${app_sources})
+
+# needed because std::iterator was deprecated with -std=c++17
+target_compile_options(app PRIVATE -Wno-deprecated-declarations)
