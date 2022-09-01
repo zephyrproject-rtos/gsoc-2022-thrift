@@ -1,0 +1,28 @@
+name: Build (POSIX)
+
+on: [push, pull_request]
+
+jobs:
+  build-posix:
+    defaults:
+      run:
+        shell: bash
+    # Note: ubuntu-latest does not yet have patches for loadCertificateFromBuffer()
+    # Use ubuntu-22.04 until ubuntu-latest is updated
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Update APT package database
+        run: |
+          sudo apt-get update
+
+      - name: Install Thrift
+        run: |
+          sudo apt install -y libboost-all-dev thrift-compiler libthrift-dev
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build Samples (POSIX)
+        run: |
+          make -j -C samples/lib/thrift/hello_client
+          make -j -C samples/lib/thrift/hello_server

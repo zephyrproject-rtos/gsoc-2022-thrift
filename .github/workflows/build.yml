@@ -1,9 +1,12 @@
-name: Build
+name: Build (Zephyr)
 
 on: [push, pull_request]
 
 jobs:
   build:
+    defaults:
+      run:
+        shell: bash
     runs-on: ubuntu-latest
     container:
       image: zephyrprojectrtos/ci:latest
@@ -20,19 +23,16 @@ jobs:
 
       - name: Update APT package database
         working-directory: /
-        shell: bash
         run: |
           apt-get update
 
       - name: Install Thrift
         working-directory: /
-        shell: bash
         run: |
           apt install -y libboost-all-dev thrift-compiler libthrift-dev
 
       - name: Initialize Project with West
         working-directory: thrift-for-zephyr
-        shell: bash
         run: |
           pip3 install -U west
           west init -l .
@@ -41,47 +41,12 @@ jobs:
 
       - name: Build and Run Testsuite
         working-directory: thrift-for-zephyr
-        shell: bash
         run: |
           source zephyr-env.sh
           twister -i -G -T tests/
 
       - name: Build Samples
         working-directory: thrift-for-zephyr
-        shell: bash
         run: |
           source zephyr-env.sh
           twister -i --build-only -G -T samples/
-  
-  build-posix:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          path: thrift-for-zephyr
-
-      - name: Update APT package database
-        working-directory: /
-        shell: bash
-        run: |
-          sudo apt-get update
-
-      - name: Install Thrift
-        working-directory: /
-        shell: bash
-        run: |
-          sudo apt install -y libboost-all-dev thrift-compiler libthrift-dev
-
-      - name: Build Samples (POSIX)
-        working-directory: thrift-for-zephyr
-        shell: bash
-        run: |
-          make -j -C samples/lib/thrift/hello_client
-          make -j -C samples/lib/thrift/hello_server
-
-#      - name: Archive firmware
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: firmware
-#          path: thrift-for-zephyr/build/zephyr/zephyr.*
