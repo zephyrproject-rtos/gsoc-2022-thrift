@@ -14,8 +14,8 @@
 
 #include <thrift/transport/TFDTransport.h>
 
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/zephyr.h>
 
 #include "thrift/server/TFDServer.h"
 
