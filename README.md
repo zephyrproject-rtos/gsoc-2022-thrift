@@ -3,6 +3,7 @@
 ## Build Status
 
 [![Build](https://github.com/zephyrproject-rtos/gsoc-2022-thrift/actions/workflows/build.yml/badge.svg)](https://github.com/zephyrproject-rtos/gsoc-2022-thrift/actions)
+[![Build (POSIX)](https://github.com/zephyrproject-rtos/gsoc-2022-thrift/actions/workflows/build-posix.yml/badge.svg)](https://github.com/zephyrproject-rtos/gsoc-2022-thrift/actions/workflows/build-posix.yml)
 
 ## What is Thrift?
 
