@@ -7,7 +7,7 @@
 #pragma once
 
 #ifdef __ZEPHYR__
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 #else
 #define printk printf
 #endif

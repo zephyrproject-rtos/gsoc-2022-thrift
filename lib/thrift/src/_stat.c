@@ -7,7 +7,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#include <zephyr/zephyr.h>
+#include <zephyr/kernel.h>
 
 int stat(const char* restrict path, struct stat* restrict buf) {
   ARG_UNUSED(path);
