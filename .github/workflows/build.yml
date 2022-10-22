@@ -22,10 +22,17 @@ jobs:
     container:
       image: zephyrprojectrtos/ci:latest
     env:
-      THRIFT_VERSION: 0.16.0
       CMAKE_PREFIX_PATH: /opt/toolchains
       # To prevent apt from prompting the user to enter locale info
       DEBIAN_FRONTEND: noninteractive
+      # Update west modules minimally for CI
+      # Note the --group-filter argument is still not really useful because
+      # - it pulls in way too much by default
+      #   - many modules do not belong to a group
+      #   - the default is to include all modules
+      # - it is impossible to start a group filter with a dash e.g. -debug
+      # For reference: west update --group-filter +crypto,-debug,-fs,-hal,-tee,-tools
+      WEST_MODULES: cmsis mbedtls
     steps:
       - name: Update APT package database
         working-directory: /
@@ -42,7 +49,7 @@ jobs:
           pip3 install -U west
           west init zephyrproject
           cd zephyrproject
-          west update
+          west update $WEST_MODULES
 
       - name: Checkout Thrift Module
         uses: actions/checkout@v2
