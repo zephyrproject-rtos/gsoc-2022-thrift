@@ -5,13 +5,9 @@ manifest:
   remotes:
     - name: upstream
       url-base: https://github.com/zephyrproject-rtos
-    - name: cfriedt
-      url-base: https://github.com/cfriedt
 
   projects:
     - name: gsoc-2022-thrift
       path: modules/lib/thrift
       revision: main
-    - name: thrift
-      remote: cfriedt
-      path: modules/lib/thrift/.upstream
+      submodules: true
