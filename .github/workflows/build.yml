@@ -57,11 +57,12 @@ jobs:
           submodules: recursive
           path: zephyrproject/modules/lib/thrift
 
-      # This might not even be necessary - please experiment
       - name: Add Thrift Submanifest
+        # Note: this is manually cloned above, but the submanifest
+        # must be there for west to automatically include the module.
+        # Users should use cat << EOF here as shown in README.md.
         working-directory: zephyrproject/zephyr
         shell: bash
-        # users should use cat << EOF here as shown in docs
         run: |
           cp ../modules/lib/thrift/scripts/99-thrift.yaml submanifests
 
