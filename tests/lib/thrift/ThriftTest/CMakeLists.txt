@@ -5,9 +5,9 @@ cmake_minimum_required(VERSION 3.13.1)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(thrift_test)
 
-set(THRIFT_UPSTREAM "${CMAKE_CURRENT_SOURCE_DIR}/../../../../.upstream")
+set(THRIFT_UPSTREAM "${ZEPHYR_THRIFT_MODULE_DIR}/.upstream")
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake/thrift.cmake)
+include(${ZEPHYR_THRIFT_MODULE_DIR}/cmake/thrift.cmake)
 
 FILE(GLOB app_sources 
     src/*.cpp
@@ -30,7 +30,6 @@ thrift(
     cpp
     :no_skeleton
     ${gen_dir}
-    # FIXME: is there a variable that can be used here to refer to the module root?
     "${THRIFT_UPSTREAM}/test/ThriftTest.thrift"
     ""
     ${generated_sources}
