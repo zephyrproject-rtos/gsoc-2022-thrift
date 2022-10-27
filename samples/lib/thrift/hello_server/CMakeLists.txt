@@ -9,7 +9,7 @@ FILE(GLOB app_sources
     src/*.cpp
 )
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake/thrift.cmake)
+include(${ZEPHYR_THRIFT_MODULE_DIR}/cmake/thrift.cmake)
 
 set(generated_sources "")
 set(gen_dir ${ZEPHYR_BINARY_DIR}/misc/generated/thrift_hello)
@@ -23,8 +23,7 @@ thrift(
     cpp
     :no_skeleton
     ${gen_dir}
-    # FIXME: is there a variable that can be used here to refer to the module root?
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../thrift/hello.thrift"
+    "${ZEPHYR_THRIFT_MODULE_DIR}/thrift/hello.thrift"
     ""
     ${generated_sources}
 )
