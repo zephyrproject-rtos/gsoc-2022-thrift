@@ -66,7 +66,13 @@ public:
       const std::shared_ptr<apache::thrift::protocol::TProtocolFactory>& inputProtocolFactory,
       const std::shared_ptr<apache::thrift::protocol::TProtocolFactory>& outputProtocolFactory);
 
-  ~TSimpleServer() override;
+  ~TSimpleServer();
+
+  virtual void serve() override;
+  virtual void stop() override;
+  virtual int64_t getConcurrentClientLimit() const override;
+  virtual int64_t getConcurrentClientCount() const override;
+  virtual int64_t getConcurrentClientCountHWM() const override;
 
 protected:
   void onClientConnected(const std::shared_ptr<TConnectedClient>& pClient) override /* override */;

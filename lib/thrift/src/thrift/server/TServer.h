@@ -26,7 +26,6 @@
 #define _THRIFT_SERVER_TSERVER_H_ 1
 
 #include <thrift/TProcessor.h>
-#include <thrift/concurrency/Thread.h>
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/transport/TServerTransport.h>
 
@@ -100,16 +99,16 @@ protected:
  * Thrift server.
  *
  */
-class TServer : public concurrency::Runnable {
+class TServer {
 public:
-  ~TServer() override = default;
+  ~TServer() = default;
 
   virtual void serve() = 0;
 
   virtual void stop() {}
 
   // Allows running the server as a Runnable thread
-  void run() override { serve(); }
+  void run() { serve(); }
 
   std::shared_ptr<TProcessorFactory> getProcessorFactory() { return processorFactory_; }
 

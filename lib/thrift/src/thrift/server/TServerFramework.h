@@ -28,7 +28,6 @@
 #include <memory>
 #include <stdint.h>
 #include <thrift/TProcessor.h>
-#include <thrift/concurrency/Monitor.h>
 #include <thrift/server/TConnectedClient.h>
 #include <thrift/server/TServer.h>
 #include <thrift/transport/TServerTransport.h>
@@ -80,7 +79,7 @@ public:
       const std::shared_ptr<apache::thrift::protocol::TProtocolFactory>& inputProtocolFactory,
       const std::shared_ptr<apache::thrift::protocol::TProtocolFactory>& outputProtocolFactory);
 
-  ~TServerFramework() override;
+  ~TServerFramework();
 
   /**
    * Accept clients from the TServerTransport and add them for processing.
@@ -89,12 +88,12 @@ public:
    * Post-conditions (return guarantees):
    *   The serverTransport will be closed.
    */
-  void serve() override;
+  virtual void serve() override;
 
   /**
    * Interrupt serve() so that it meets post-conditions and returns.
    */
-  void stop() override;
+  virtual void stop() override;
 
   /**
    * Get the concurrent client limit.
@@ -161,11 +160,6 @@ private:
    * Calls onClientDisconnected and then deletes pClient.
    */
   void disposeConnectedClient(TConnectedClient* pClient);
-
-  /**
-   * Monitor for limiting the number of concurrent clients.
-   */
-  apache::thrift::concurrency::Monitor mon_;
 
   /**
    * The number of concurrent clients.
