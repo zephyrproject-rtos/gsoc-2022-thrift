@@ -32,15 +32,15 @@ namespace apache {
 namespace thrift {
 namespace server {
 
-using apache::thrift::concurrency::Synchronized;
+// using apache::thrift::concurrency::Synchronized;
 using apache::thrift::protocol::TProtocol;
 using apache::thrift::protocol::TProtocolFactory;
-using std::bind;
-using std::shared_ptr;
 using apache::thrift::transport::TServerTransport;
 using apache::thrift::transport::TTransport;
 using apache::thrift::transport::TTransportException;
 using apache::thrift::transport::TTransportFactory;
+using std::bind;
+using std::shared_ptr;
 using std::string;
 
 TServerFramework::TServerFramework(const shared_ptr<TProcessorFactory>& processorFactory,
@@ -50,8 +50,7 @@ TServerFramework::TServerFramework(const shared_ptr<TProcessorFactory>& processo
   : TServer(processorFactory, serverTransport, transportFactory, protocolFactory),
     clients_(0),
     hwm_(0),
-    limit_(INT64_MAX) {
-}
+    limit_(INT64_MAX) {}
 
 TServerFramework::TServerFramework(const shared_ptr<TProcessor>& processor,
                                    const shared_ptr<TServerTransport>& serverTransport,
@@ -60,8 +59,7 @@ TServerFramework::TServerFramework(const shared_ptr<TProcessor>& processor,
   : TServer(processor, serverTransport, transportFactory, protocolFactory),
     clients_(0),
     hwm_(0),
-    limit_(INT64_MAX) {
-}
+    limit_(INT64_MAX) {}
 
 TServerFramework::TServerFramework(const shared_ptr<TProcessorFactory>& processorFactory,
                                    const shared_ptr<TServerTransport>& serverTransport,
@@ -77,8 +75,7 @@ TServerFramework::TServerFramework(const shared_ptr<TProcessorFactory>& processo
             outputProtocolFactory),
     clients_(0),
     hwm_(0),
-    limit_(INT64_MAX) {
-}
+    limit_(INT64_MAX) {}
 
 TServerFramework::TServerFramework(const shared_ptr<TProcessor>& processor,
                                    const shared_ptr<TServerTransport>& serverTransport,
@@ -94,8 +91,7 @@ TServerFramework::TServerFramework(const shared_ptr<TProcessor>& processor,
             outputProtocolFactory),
     clients_(0),
     hwm_(0),
-    limit_(INT64_MAX) {
-}
+    limit_(INT64_MAX) {}
 
 TServerFramework::~TServerFramework() = default;
 
@@ -142,9 +138,9 @@ void TServerFramework::serve() {
       // clients allowed, wait for one or more clients to drain before
       // accepting another.
       {
-        Synchronized sync(mon_);
+        // Synchronized sync(mon_);
         while (clients_ >= limit_) {
-          mon_.wait();
+          // mon_.wait();
         }
       }
 
@@ -161,11 +157,8 @@ void TServerFramework::serve() {
       }
 
       newlyConnectedClient(shared_ptr<TConnectedClient>(
-          new TConnectedClient(getProcessor(inputProtocol, outputProtocol, client),
-                               inputProtocol,
-                               outputProtocol,
-                               eventHandler_,
-                               client),
+          new TConnectedClient(getProcessor(inputProtocol, outputProtocol, client), inputProtocol,
+                               outputProtocol, eventHandler_, client),
           bind(&TServerFramework::disposeConnectedClient, this, std::placeholders::_1)));
 
     } catch (TTransportException& ttx) {
@@ -194,17 +187,17 @@ void TServerFramework::serve() {
 }
 
 int64_t TServerFramework::getConcurrentClientLimit() const {
-  Synchronized sync(mon_);
+  // Synchronized sync(mon_);
   return limit_;
 }
 
 int64_t TServerFramework::getConcurrentClientCount() const {
-  Synchronized sync(mon_);
+  // Synchronized sync(mon_);
   return clients_;
 }
 
 int64_t TServerFramework::getConcurrentClientCountHWM() const {
-  Synchronized sync(mon_);
+  // Synchronized sync(mon_);
   return hwm_;
 }
 
@@ -212,10 +205,10 @@ void TServerFramework::setConcurrentClientLimit(int64_t newLimit) {
   if (newLimit < 1) {
     throw std::invalid_argument("newLimit must be greater than zero");
   }
-  Synchronized sync(mon_);
+  // Synchronized sync(mon_);
   limit_ = newLimit;
   if (limit_ - clients_ > 0) {
-    mon_.notify();
+    // mon_.notify();
   }
 }
 
@@ -228,7 +221,7 @@ void TServerFramework::stop() {
 
 void TServerFramework::newlyConnectedClient(const shared_ptr<TConnectedClient>& pClient) {
   {
-    Synchronized sync(mon_);
+    // Synchronized sync(mon_);
     ++clients_;
     hwm_ = (std::max)(hwm_, clients_);
   }
@@ -238,14 +231,17 @@ void TServerFramework::newlyConnectedClient(const shared_ptr<TConnectedClient>& 
 
 void TServerFramework::disposeConnectedClient(TConnectedClient* pClient) {
   onClientDisconnected(pClient);
-  delete pClient;
+  // XXX: causes a warning
+  // warning: deleting object of polymorphic class type 'apache::thrift::server::TConnectedClient'
+  // which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+  // delete pClient;
 
-  Synchronized sync(mon_);
+  // Synchronized sync(mon_);
   if (limit_ - --clients_ > 0) {
-    mon_.notify();
+    // mon_.notify();
   }
 }
 
-}
-}
-} // apache::thrift::server
+} // namespace server
+} // namespace thrift
+} // namespace apache

@@ -42,7 +42,7 @@ namespace server {
  * encapsulated here.
  */
 
-class TConnectedClient : public apache::thrift::concurrency::Runnable {
+class TConnectedClient {
 public:
   /**
    * Constructor.
@@ -62,7 +62,7 @@ public:
   /**
    * Destructor.
    */
-  ~TConnectedClient() override;
+  ~TConnectedClient();
 
   /**
    * Drive the client until it is done.
@@ -80,7 +80,7 @@ public:
    *              handle unexpected exceptions by logging
    *            cleanup()
    */
-  void run() override /* override */;
+  void run();
 
 protected:
   /**
