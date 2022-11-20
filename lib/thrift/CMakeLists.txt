@@ -8,6 +8,7 @@ set(THRIFT_UPSTREAM "${ZEPHYR_THRIFT_MODULE_DIR}/.apache-thrift")
 
 zephyr_library()
 zephyr_include_directories(include)
+zephyr_include_directories(src)
 zephyr_include_directories(${THRIFT_UPSTREAM}/lib/cpp/src)
 
 zephyr_library_sources(
