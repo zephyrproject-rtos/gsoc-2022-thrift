@@ -14,8 +14,8 @@
 #include <zephyr/posix/arpa/inet.h>
 #endif
 #include <sys/types.h>
-#ifdef HAVE_SYS_POLL_H
-#include <sys/poll.h>
+#ifdef HAVE_POLL_H
+#include <poll.h>
 #endif
 
 #include <zephyr/net/tls_credentials.h>
