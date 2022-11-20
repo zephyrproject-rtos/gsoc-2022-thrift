@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.13.1)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(thrift_test)
 
-set(THRIFT_UPSTREAM "${ZEPHYR_THRIFT_MODULE_DIR}/.upstream")
+set(THRIFT_UPSTREAM "${ZEPHYR_THRIFT_MODULE_DIR}/.apache-thrift")
 
 include(${ZEPHYR_THRIFT_MODULE_DIR}/cmake/thrift.cmake)
 
@@ -30,7 +30,8 @@ thrift(
     cpp
     :no_skeleton
     ${gen_dir}
-    "${THRIFT_UPSTREAM}/test/ThriftTest.thrift"
+    # v0.16: ubuntu packaged thrift compiler does not support 'uuid' type
+    "${THRIFT_UPSTREAM}/test/v0.16/ThriftTest.thrift"
     ""
     ${generated_sources}
 )

@@ -1,3 +1,3 @@
-[submodule ".upstream"]
-	path = .upstream
-	url = https://github.com/cfriedt/thrift.git
+[submodule ".apache-thrift"]
+	path = .apache-thrift
+	url = https://github.com/apache/thrift.git
