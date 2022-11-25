@@ -35,10 +35,10 @@ zephyr_library_sources_ifdef(CONFIG_THRIFT_SSL_SOCKET
 )
 
 zephyr_library_sources_ifdef(CONFIG_THRIFT_ZLIB_TRANSPORT
-  src/defl_static.c
-  src/genlz77.c
-  src/inflater.c
-  src/zlib_comp.c
+  muzic/defl_static.c
+  muzic/genlz77.c
+  muzic/inflater.c
+  muzic/zlib_comp.c
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TZlibTransport.cpp
 )
 

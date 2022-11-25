@@ -11,9 +11,9 @@ zephyr_include_directories(${MUZIC_BASE}/include)
 
 target_sources(app PRIVATE 
   src/integration.c
-  ${MUZIC_BASE}/src/defl_static.c
-  ${MUZIC_BASE}/src/genlz77.c
-  ${MUZIC_BASE}/src/inflater.c
-  ${MUZIC_BASE}/src/zlib_comp.c
+  ${MUZIC_BASE}/muzic/defl_static.c
+  ${MUZIC_BASE}/muzic/genlz77.c
+  ${MUZIC_BASE}/muzic/inflater.c
+  ${MUZIC_BASE}/muzic/zlib_comp.c
 )
 
