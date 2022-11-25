@@ -10,6 +10,10 @@ common:
   arch_exclude: arc xtensa
   integration_platforms:
     - mps2_an385
+    - qemu_cortex_a53
+    - qemu_riscv32
+    - qemu_riscv64_smp
+    - qemu_x86
     - qemu_x86_64
 tests:
   thrift.ThriftTest.newlib.binaryProtocol:
