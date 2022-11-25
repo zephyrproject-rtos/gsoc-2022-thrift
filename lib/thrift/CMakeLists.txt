@@ -17,7 +17,7 @@ zephyr_library_sources(
   src/thrift/server/TFDServer.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/protocol/TProtocol.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/server/TConnectedClient.cpp
-  ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/server/TServerFramework.cpp
+  src/thrift/server/TServerFramework.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/server/TSimpleServer.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/SocketCommon.cpp
   ${THRIFT_UPSTREAM}/lib/cpp/src/thrift/transport/TBufferTransports.cpp
