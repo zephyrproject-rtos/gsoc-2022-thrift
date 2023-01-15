@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2006- Facebook
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -21,9 +26,9 @@
 #define _THRIFT_SERVER_TSERVER_H_ 1
 
 #include <thrift/TProcessor.h>
-#include <thrift/transport/TServerTransport.h>
-#include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/concurrency/Thread.h>
+#include <thrift/protocol/TBinaryProtocol.h>
+#include <thrift/transport/TServerTransport.h>
 
 #include <memory>
 
@@ -58,8 +63,7 @@ public:
   /**
    * Called when a new client has connected and is about to being processing.
    */
-  virtual void* createContext(std::shared_ptr<TProtocol> input,
-                              std::shared_ptr<TProtocol> output) {
+  virtual void* createContext(std::shared_ptr<TProtocol> input, std::shared_ptr<TProtocol> output) {
     (void)input;
     (void)output;
     return nullptr;
@@ -113,9 +117,7 @@ public:
 
   std::shared_ptr<TTransportFactory> getInputTransportFactory() { return inputTransportFactory_; }
 
-  std::shared_ptr<TTransportFactory> getOutputTransportFactory() {
-    return outputTransportFactory_;
-  }
+  std::shared_ptr<TTransportFactory> getOutputTransportFactory() { return outputTransportFactory_; }
 
   std::shared_ptr<TProtocolFactory> getInputProtocolFactory() { return inputProtocolFactory_; }
 
@@ -215,8 +217,8 @@ protected:
    * for each connection if it desires.
    */
   std::shared_ptr<TProcessor> getProcessor(std::shared_ptr<TProtocol> inputProtocol,
-                                             std::shared_ptr<TProtocol> outputProtocol,
-                                             std::shared_ptr<TTransport> transport) {
+                                           std::shared_ptr<TProtocol> outputProtocol,
+                                           std::shared_ptr<TTransport> transport) {
     TConnectionInfo connInfo;
     connInfo.input = inputProtocol;
     connInfo.output = outputProtocol;
@@ -266,8 +268,8 @@ public:
 #ifdef HAVE_SYS_RESOURCE_H
 int increase_max_fds(int max_fds = (1 << 24));
 #endif
-}
-}
-} // apache::thrift::server
+} // namespace server
+} // namespace thrift
+} // namespace apache
 
 #endif // #ifndef _THRIFT_SERVER_TSERVER_H_
