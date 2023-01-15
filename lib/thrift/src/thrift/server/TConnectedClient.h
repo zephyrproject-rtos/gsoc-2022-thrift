@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2006- Facebook
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -48,12 +53,11 @@ public:
    * @param[in] eventHandler   the server event handler
    * @param[in] client         the TTransport representing the client
    */
-  TConnectedClient(
-      const std::shared_ptr<apache::thrift::TProcessor>& processor,
-      const std::shared_ptr<apache::thrift::protocol::TProtocol>& inputProtocol,
-      const std::shared_ptr<apache::thrift::protocol::TProtocol>& outputProtocol,
-      const std::shared_ptr<apache::thrift::server::TServerEventHandler>& eventHandler,
-      const std::shared_ptr<apache::thrift::transport::TTransport>& client);
+  TConnectedClient(const std::shared_ptr<apache::thrift::TProcessor>& processor,
+                   const std::shared_ptr<apache::thrift::protocol::TProtocol>& inputProtocol,
+                   const std::shared_ptr<apache::thrift::protocol::TProtocol>& outputProtocol,
+                   const std::shared_ptr<apache::thrift::server::TServerEventHandler>& eventHandler,
+                   const std::shared_ptr<apache::thrift::transport::TTransport>& client);
 
   /**
    * Destructor.
@@ -103,8 +107,8 @@ private:
    */
   void* opaqueContext_;
 };
-}
-}
-}
+} // namespace server
+} // namespace thrift
+} // namespace apache
 
 #endif // #ifndef _THRIFT_SERVER_TCONNECTEDCLIENT_H_

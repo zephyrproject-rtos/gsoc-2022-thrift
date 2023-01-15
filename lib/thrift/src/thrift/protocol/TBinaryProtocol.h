@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) 2006- Facebook
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -168,20 +173,17 @@ public:
 
   int getMinSerializedSize(TType type) override;
 
-  void checkReadBytesAvailable(TSet& set) override
-  {
-      trans_->checkReadBytesAvailable(set.size_ * getMinSerializedSize(set.elemType_));
+  void checkReadBytesAvailable(TSet& set) override {
+    trans_->checkReadBytesAvailable(set.size_ * getMinSerializedSize(set.elemType_));
   }
 
-  void checkReadBytesAvailable(TList& list) override
-  {
-      trans_->checkReadBytesAvailable(list.size_ * getMinSerializedSize(list.elemType_));
+  void checkReadBytesAvailable(TList& list) override {
+    trans_->checkReadBytesAvailable(list.size_ * getMinSerializedSize(list.elemType_));
   }
 
-  void checkReadBytesAvailable(TMap& map) override
-  {
-      int elmSize = getMinSerializedSize(map.keyType_) + getMinSerializedSize(map.valueType_);
-      trans_->checkReadBytesAvailable(map.size_ * elmSize);
+  void checkReadBytesAvailable(TMap& map) override {
+    int elmSize = getMinSerializedSize(map.keyType_) + getMinSerializedSize(map.valueType_);
+    trans_->checkReadBytesAvailable(map.size_ * elmSize);
   }
 
 protected:
@@ -234,17 +236,12 @@ public:
     std::shared_ptr<Transport_> specific_trans = std::dynamic_pointer_cast<Transport_>(trans);
     TProtocol* prot;
     if (specific_trans) {
-      prot = new TBinaryProtocolT<Transport_, ByteOrder_>(specific_trans,
-                                                          string_limit_,
-                                                          container_limit_,
-                                                          strict_read_,
+      prot = new TBinaryProtocolT<Transport_, ByteOrder_>(specific_trans, string_limit_,
+                                                          container_limit_, strict_read_,
                                                           strict_write_);
     } else {
-      prot = new TBinaryProtocolT<TTransport, ByteOrder_>(trans,
-                                                          string_limit_,
-                                                          container_limit_,
-                                                          strict_read_,
-                                                          strict_write_);
+      prot = new TBinaryProtocolT<TTransport, ByteOrder_>(trans, string_limit_, container_limit_,
+                                                          strict_read_, strict_write_);
     }
 
     return std::shared_ptr<TProtocol>(prot);
@@ -259,9 +256,9 @@ private:
 
 typedef TBinaryProtocolFactoryT<TTransport> TBinaryProtocolFactory;
 typedef TBinaryProtocolFactoryT<TTransport, TNetworkLittleEndian> TLEBinaryProtocolFactory;
-}
-}
-} // apache::thrift::protocol
+} // namespace protocol
+} // namespace thrift
+} // namespace apache
 
 #include <thrift/protocol/TBinaryProtocol.tcc>
 
