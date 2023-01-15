@@ -31,7 +31,7 @@ using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
 
-#define HELLO_SERVER_STACK_SIZE 4096
+#define HELLO_SERVER_STACK_SIZE 8192
 static K_THREAD_STACK_DEFINE(hello_server_stack, HELLO_SERVER_STACK_SIZE);
 
 struct ctx {
