@@ -8,12 +8,14 @@ common:
   filter: TOOLCHAIN_HAS_NEWLIB == 1
   toolchain_exclude: xcc
   arch_exclude: arc xtensa
+  # qemu_x86 exluded due to missing long double functions in SDK
+  # See https://github.com/zephyrproject-rtos/sdk-ng/issues/603
+  platform_exclude: qemu_x86
   integration_platforms:
     - mps2_an385
     - qemu_cortex_a53
     - qemu_riscv32
     - qemu_riscv64_smp
-    - qemu_x86
     - qemu_x86_64
 tests:
   thrift.ThriftTest.newlib.binaryProtocol:
