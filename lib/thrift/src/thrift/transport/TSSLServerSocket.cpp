@@ -211,6 +211,19 @@ void TSSLServerSocket::listen() {
   listening_ = true;
 }
 
+void TSSLServerSocket::close() {
+  rwMutex_.lock();
+  if (pChildInterruptSockReader_ != nullptr
+      && *pChildInterruptSockReader_ != THRIFT_INVALID_SOCKET) {
+    ::THRIFT_CLOSESOCKET(*pChildInterruptSockReader_);
+    *pChildInterruptSockReader_ = THRIFT_INVALID_SOCKET;
+  }
+
+  rwMutex_.unlock();
+
+  TServerSocket::close();
+}
+
 } // namespace transport
 } // namespace thrift
 } // namespace apache

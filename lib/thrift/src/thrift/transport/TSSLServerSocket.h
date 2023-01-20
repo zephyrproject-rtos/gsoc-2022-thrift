@@ -53,6 +53,7 @@ public:
                    std::shared_ptr<TSSLSocketFactory> factory);
 
   void listen() override;
+  void close() override;
 
 protected:
   std::shared_ptr<TSocket> createSocket(THRIFT_SOCKET socket) override;
