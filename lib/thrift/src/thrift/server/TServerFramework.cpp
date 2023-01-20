@@ -229,18 +229,18 @@ void TServerFramework::newlyConnectedClient(const shared_ptr<TConnectedClient>& 
   onClientConnected(pClient);
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
 void TServerFramework::disposeConnectedClient(TConnectedClient* pClient) {
   onClientDisconnected(pClient);
-  // XXX: causes a warning
-  // warning: deleting object of polymorphic class type 'apache::thrift::server::TConnectedClient'
-  // which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
-  // delete pClient;
+  delete pClient;
 
   // Synchronized sync(mon_);
   if (limit_ - --clients_ > 0) {
     // mon_.notify();
   }
 }
+#pragma GCC diagnostic pop
 
 } // namespace server
 } // namespace thrift
