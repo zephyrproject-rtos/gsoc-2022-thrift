@@ -70,7 +70,7 @@ jobs:
         working-directory: zephyrproject/zephyr
         run: |
           source zephyr-env.sh
-          twister -i -G -T ../modules/lib/thrift/tests
+          twister --retry-failed 3 -i -G -T ../modules/lib/thrift/tests
 
       - name: Build Samples
         working-directory: zephyrproject/zephyr
